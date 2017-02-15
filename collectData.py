@@ -21,14 +21,17 @@ str_price_json={
 str_volume_json={
     'metric':'security.volume',
     'time':'date',
-    'value':'close',
+    'value':'volume',
     'code':'code',
     'tags':{
         'period':'day'
     }
 }
 
-MongodbJson={}  #输出数据爬取的开始点和结束点
+MongodbJson={}     #输出数据爬取的开始点和结束点
+
+for i,t in config.StocksList.items():
+    MongodbJson[i]={}
 
 def fetchAllStocksHistoryData():    
     """
@@ -82,10 +85,12 @@ def fetchAllStocksHistoryTickData():
     delta=td(1,0,0)                                  #间隔一天
     str_volume_json['tags']['period']='tick'
     str_volume_json['time']='time'
+    str_volume_json['tags']['type']=True
     str_price_json['time']='time'
+    str_price_json['value']='price'
     for i,t in config.StocksList.items():
         date=dt(2013,1,1)
-        while date>today:
+        while date<today:
             timestr=dt.strftime(date,'%Y-%m-%d')
             df=ts.get_tick_data(i,date=timestr)            
             timestr=timestr+' '
@@ -93,7 +98,10 @@ def fetchAllStocksHistoryTickData():
                 if not df.iloc[0,0].startswith('alert'):
                     label=True
                     MongodbJson[i]['tickStart']=timestr+df.iloc[-1,0]
-            result=_dataFrame2MetricsList(df_M30,str_volume_json,timestr)
+            result=_dataFrame2MetricsList(df,str_volume_json,date=timestr,code=i)
+            database.insertList(result)
+            result=_dataFrame2MetricsList(df,str_price_json,date=timestr,code=i)
+            database.insertList(result)
             date=date+delta
             pass        
     pass
@@ -122,10 +130,20 @@ def fetchAllStocksCurrentTickData():
 
     pass
 
-def _dataFrame2MetricsList(df,str_json,date='',time=''):
+def _dataFrame2MetricsList(df,str_json,date='',time='',code=''):
     data=[]
+
+    if df.iloc[0,0].startswith('alert'):
+        return data
+
     for index, row in df.iterrows():
-        str_json['tags']['code']=row[str_json['code']]
+        if code:
+            str_json['tags']['code']=code
+        else:
+            str_json['tags']['code']=row[str_json['code']]
+
+        if str_json['tags'].get('type'):
+            str_json['tags']['type']=row['type']
         data.append({
             "metric": str_json['metric'],
             "timestamp": dt.strptime(date+row[str_json['time']]+time,'%Y-%m-%d %H:%M:%S'),
@@ -135,4 +153,5 @@ def _dataFrame2MetricsList(df,str_json,date='',time=''):
     return data
 
 if __name__ == '__main__':
-    fetchAllStocksHistoryData()
+    #fetchAllStocksHistoryData()
+    fetchAllStocksHistoryTickData()
