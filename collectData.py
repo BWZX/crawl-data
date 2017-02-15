@@ -3,6 +3,7 @@
 
 import tushare as ts
 import config 
+import json
 from datetime import datetime as dt, timedelta as td
 import pandas as pd
 import database
@@ -28,17 +29,20 @@ str_volume_json={
     }
 }
 
-MongodbJson={}     #输出数据爬取的开始点和结束点
 
-for i,t in config.StocksList.items():
-    MongodbJson[i]={}
+MongodbJson={}     #输出数据爬取的开始点和结束点
+try:
+    with open('mongo.json','r') as f:
+        MongodbJson=json.loads(f.read())
+except Exception:    
+    for i,t in config.StocksList.items():
+        MongodbJson[i]={}
 
 def fetchAllStocksHistoryData():    
     """
         获取所有的股票的历史数据，
         不包括成交明细，同时把数据存到数据库。
-        这个函数应该每日只运行一次
-        并且只更新最近的
+        这个函数应该只运行一次        
     """
     currentCode={}
     for i,t in config.StocksList.items():
@@ -76,8 +80,7 @@ def fetchAllStocksHistoryTickData():
     """
         获取所有的股票的成交明细历史数据，
         同时把数据存到数据库。
-        这个函数应该每日只运行一次
-        并且只更新最近的
+        这个函数应该只运行一次        
     """
     today=dt.now()
     label=False
@@ -111,11 +114,52 @@ def fetchAllStocksTodayTickData():
         获取所有的股票当日的成交明细数据，
         同时把数据存到数据库。        
     """   
-
+    str_volume_json['tags']['period']='tick'
+    str_volume_json['time']='time'
+    str_volume_json['tags']['type']=True
+    str_price_json['time']='time'
+    str_price_json['value']='price'
+    now=dt.now()
+    date=dt(now.year,now.month,now.day)
+    timestr=dt.strftime(date,'%Y-%m-%d')
     for i,t in config.StocksList.items():
-        df=ts.get_today_ticks(i)
+        df=ts.get_today_ticks(i)        
+        timestr=timestr+' '
+        if not df.iloc[0,0].startswith('alert'):            
+            MongodbJson[i]['tickEnd']=timestr+df.iloc[0,0]
 
+        result=_dataFrame2MetricsList(df,str_volume_json,date=timestr,code=i)
+        database.insertList(result)
+        result=_dataFrame2MetricsList(df,str_price_json,date=timestr,code=i)
+        database.insertList(result)
     pass
+
+def fetchAllStocksTodayNotTickData():
+    for i,t in config.StocksList.items():
+        df_D=ts.get_k_data(i,ktype='D')
+        df_H1=ts.get_k_data(i,ktype='60')
+        df_M30=ts.get_k_data(i,ktype='30')
+
+        MongodbJson[i]['dayEnd']   = df_D.iloc[-1,0]
+        MongodbJson[i]['h1End']   = df_D.iloc[-1,0]
+        MongodbJson[i]['m30End']   = df_D.iloc[-1,0]
+
+        result=_dataFrame2MetricsList(df_D.tail(2),str_price_json,time=' 15:00:00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据 
+        result=_dataFrame2MetricsList(df_D.tail(2),str_volume_json,time=' 15:00:00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存volume 数据
+
+        str_volume_json['tags']['period']='h1'
+        result=_dataFrame2MetricsList(df_H1.tail(10),str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据  
+        result=_dataFrame2MetricsList(df_H1.tail(10),str_volume_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存volume 数据
+
+        str_volume_json['tags']['period']='m30'
+        result=_dataFrame2MetricsList(df_M30.tail(20),str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据  
+        result=_dataFrame2MetricsList(df_M30.tail(20),str_volume_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result) 
 
 
 def fetchAllStocksCurrentTickData():    
@@ -153,5 +197,5 @@ def _dataFrame2MetricsList(df,str_json,date='',time='',code=''):
     return data
 
 if __name__ == '__main__':
-    #fetchAllStocksHistoryData()
-    fetchAllStocksHistoryTickData()
+    fetchAllStocksHistoryData()     #this function should excute only once.
+    fetchAllStocksHistoryTickData() #this function should excute only once.

@@ -3,13 +3,19 @@
 
 import config
 import json
+import urllib, urllib.request
 
 
-def insertList(data):    
+def insertList(data): 
+    if not data:   
+        return
     url='http://10.8.0.5:4242/api/put'
-
-    print(data)
-
+    data = json.dumps(data)  
+    data=bytes(data,'utf8')  
+    request=urllib.request.Request(url)  
+    result=urllib.request.urlopen(request,data)
+    print(result.getcode())  
+    #print(data)
     pass
 
 '''
