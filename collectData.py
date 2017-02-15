@@ -190,7 +190,7 @@ def _dataFrame2MetricsList(df,str_json,date='',time='',code=''):
             str_json['tags']['type']=row['type']
         data.append({
             "metric": str_json['metric'],
-            "timestamp": dt.strptime(date+row[str_json['time']]+time,'%Y-%m-%d %H:%M:%S'),
+            "timestamp": int(dt.strptime(date+row[str_json['time']]+time,'%Y-%m-%d %H:%M:%S').timestamp()),
             "value": row[str_json['value']],
             "tags": str_json['tags']
         })
