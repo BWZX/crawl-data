@@ -24,6 +24,7 @@ def insertList(data):
         result=urllib.request.urlopen(request, tempdt)
         feedback=str(result.getcode())        
         if feedback == '204' or '200':
+            return
             # print(feedback+' '+printmsg)
         else:
             # print(feedback,'  something wrong.')

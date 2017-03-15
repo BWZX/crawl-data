@@ -16,7 +16,7 @@ if __name__ == '__main__':
     """    
     while True:
         collectData.fetchAllStocksTodayTickData()
-        time.sleep(config['data_updata_interval'])
+        time.sleep(config.AppConfig['data_updata_interval'])
 
         with open('mongo.json','w') as f:
             f.write(json.dumps(collectData.MongodbJson))
