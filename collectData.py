@@ -9,12 +9,22 @@ import pandas as pd
 # from time_series.crawl_data import database
 import database
 
+stolist=config.stolist
+try:
+    with open('progress.ini','r') as f:
+        now_at=f.read()
+        print(now_at)
+        stolist=stolist[stolist.index(now_at)+1:]
+except Exception:
+    pass
+
+
 MongodbJson={}     #输出数据爬取的开始点和结束点
 try:
     with open('mongo.json','r') as f:
         MongodbJson=json.loads(f.read())
 except Exception:    
-    for i in config.stolist:
+    for i in stolist:
         MongodbJson[i]={}
 
 def fetchAllStocksHistoryData():    
@@ -44,7 +54,7 @@ def fetchAllStocksHistoryData():
     }
 
     currentCode={}
-    for i in config.stolist:
+    for i in stolist:
         df_D=ts.get_k_data(i,'1980-01-01',ktype='D')
         df_H1=ts.get_k_data(i,'1980-01-01',ktype='60')
         df_M30=ts.get_k_data(i,'1980-01-01',ktype='30')
@@ -144,7 +154,7 @@ def fetchAllStocksTodayNotTickData():
         }
     }
 
-    for i in config.stolist:
+    for i in stolist:
         df_D=ts.get_k_data(i,ktype='D')
         df_H1=ts.get_k_data(i,ktype='60')
         df_M30=ts.get_k_data(i,ktype='30')
@@ -250,7 +260,7 @@ def fetchAllStocksHistoryTickData():
     today=dt(today.year, today.month, today.day)
     delta=td(1,0,0)                                 #间隔一天
     
-    for i in config.stolist:
+    for i in stolist:
         date=dt(2013,1,1)
         while date<today:
             timestr=dt.strftime(date,'%Y-%m-%d')
@@ -298,7 +308,7 @@ def fetchAllStocksTodayTickData():
     now=dt.now()
     date=dt(now.year,now.month,now.day)
     timestr=dt.strftime(date,'%Y-%m-%d')
-    for i in config.stolist:
+    for i in stolist:
         df=ts.get_today_ticks(i)        
         timestr=timestr+' '
         if not df.iloc[0,0].startswith('alert'):            
@@ -318,7 +328,7 @@ def fetchAllStocksCurrentTickData():
 
     """  
 
-    for i in config.stolist:
+    for i in stolist:
         df=ts.get_realtime_quotes(i)
 
     pass
