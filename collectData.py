@@ -6,36 +6,15 @@ import config
 import json
 from datetime import datetime as dt, timedelta as td
 import pandas as pd
+# from time_series.crawl_data import database
 import database
-
-
-str_price_json={
-    'metric':'security.price',
-    'time':'date',
-    'value':'close',
-    'code':'code',
-    'tags':{
-
-    }
-}
-    
-str_volume_json={
-    'metric':'security.volume',
-    'time':'date',
-    'value':'volume',
-    'code':'code',
-    'tags':{
-        'period':'day'
-    }
-}
-
 
 MongodbJson={}     #输出数据爬取的开始点和结束点
 try:
     with open('mongo.json','r') as f:
         MongodbJson=json.loads(f.read())
 except Exception:    
-    for i,t in config.StocksList.items():
+    for i in config.stolist:
         MongodbJson[i]={}
 
 def fetchAllStocksHistoryData():    
@@ -44,8 +23,28 @@ def fetchAllStocksHistoryData():
         不包括成交明细，同时把数据存到数据库。
         这个函数应该只运行一次        
     """
+    str_price_json={
+        'metric':'security.price',
+        'time':'date',
+        'value':'close',
+        'code':'code',
+        'tags':{
+            'period': 'day'
+
+        }
+    }
+    str_volume_json={
+        'metric':'security.volume',
+        'time':'date',
+        'value':'volume',
+        'code':'code',
+        'tags':{
+            'period':'day'
+        }
+    }
+
     currentCode={}
-    for i,t in config.StocksList.items():
+    for i in config.stolist:
         df_D=ts.get_k_data(i,'1980-01-01',ktype='D')
         df_H1=ts.get_k_data(i,'1980-01-01',ktype='60')
         df_M30=ts.get_k_data(i,'1980-01-01',ktype='30')
@@ -58,23 +57,167 @@ def fetchAllStocksHistoryData():
         currentCode['m30End']   = df_D.iloc[-1,0]
         MongodbJson[i]=currentCode.copy()
 
+        str_volume_json['tags']['period']='day'
+        str_price_json['tags']['period']='day'
+        str_price_json['value']='open'
+        str_price_json['tags']['price']='open'
+        result=_dataFrame2MetricsList(df_D,str_price_json,time=' 15:00:00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据 
+        str_price_json['value']='close'
+        str_price_json['tags']['price']='close'
+        result=_dataFrame2MetricsList(df_D,str_price_json,time=' 15:00:00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据 
+        str_price_json['value']='high'
+        str_price_json['tags']['price']='high'
+        result=_dataFrame2MetricsList(df_D,str_price_json,time=' 15:00:00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据 
+        str_price_json['value']='low'
+        str_price_json['tags']['price']='low'
         result=_dataFrame2MetricsList(df_D,str_price_json,time=' 15:00:00')  #转换数据成可供opentsdb输入的list
         database.insertList(result)                 #保存security.price 数据 
         result=_dataFrame2MetricsList(df_D,str_volume_json,time=' 15:00:00')  #转换数据成可供opentsdb输入的list
         database.insertList(result)                 #保存volume 数据
 
         str_volume_json['tags']['period']='h1'
+        str_price_json['tags']['period']='h1'
+        str_price_json['value']='open'
+        str_price_json['tags']['price']='open'
+        result=_dataFrame2MetricsList(df_H1,str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据  
+        str_price_json['value']='close'
+        str_price_json['tags']['price']='close'
+        result=_dataFrame2MetricsList(df_H1,str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据  
+        str_price_json['value']='high'
+        str_price_json['tags']['price']='high'
+        result=_dataFrame2MetricsList(df_H1,str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据  
+        str_price_json['value']='low'
+        str_price_json['tags']['price']='low'
         result=_dataFrame2MetricsList(df_H1,str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
         database.insertList(result)                 #保存security.price 数据  
         result=_dataFrame2MetricsList(df_H1,str_volume_json,time=':00')  #转换数据成可供opentsdb输入的list
         database.insertList(result)                 #保存volume 数据
 
         str_volume_json['tags']['period']='m30'
+        str_price_json['tags']['period']='m30'
+        str_price_json['value']='open'
+        str_price_json['tags']['price']='open'
+        result=_dataFrame2MetricsList(df_M30,str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据  
+        str_price_json['value']='close'
+        str_price_json['tags']['price']='close'
+        result=_dataFrame2MetricsList(df_M30,str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据  
+        str_price_json['value']='high'
+        str_price_json['tags']['price']='high'
+        result=_dataFrame2MetricsList(df_M30,str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据  
+        str_price_json['value']='low'
+        str_price_json['tags']['price']='low'
+        result=_dataFrame2MetricsList(df_M30,str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据  
+        result=_dataFrame2MetricsList(df_M30,str_volume_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存volume 数据
+        with open('progress.ini','w') as f:
+            f.write(str(i))
+    pass
+
+def fetchAllStocksTodayNotTickData():
+    str_price_json={
+        'metric':'security.price',
+        'time':'date',
+        'value':'close',
+        'code':'code',
+        'tags':{
+            'period': 'day'
+
+        }
+    }
+    str_volume_json={
+        'metric':'security.volume',
+        'time':'date',
+        'value':'volume',
+        'code':'code',
+        'tags':{
+            'period':'day'
+        }
+    }
+
+    for i in config.stolist:
+        df_D=ts.get_k_data(i,ktype='D')
+        df_H1=ts.get_k_data(i,ktype='60')
+        df_M30=ts.get_k_data(i,ktype='30')
+
+        MongodbJson[i]['dayEnd']   = df_D.iloc[-1,0]
+        MongodbJson[i]['h1End']   = df_D.iloc[-1,0]
+        MongodbJson[i]['m30End']   = df_D.iloc[-1,0]
+
+        str_volume_json['tags']['period']='day'
+        str_price_json['tags']['period']='day'
+        str_price_json['value']='open'
+        str_price_json['tags']['price']='open'
+        str_price_json['tags']['price']='open'
+        result=_dataFrame2MetricsList(df_D,str_price_json,time=' 15:00:00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据 
+        str_price_json['value']='close'
+        str_price_json['tags']['price']='close'
+        result=_dataFrame2MetricsList(df_D,str_price_json,time=' 15:00:00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据 
+        str_price_json['value']='high'
+        str_price_json['tags']['price']='high'
+        result=_dataFrame2MetricsList(df_D,str_price_json,time=' 15:00:00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据 
+        str_price_json['value']='low'
+        str_price_json['tags']['price']='low'
+        result=_dataFrame2MetricsList(df_D,str_price_json,time=' 15:00:00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据 
+        result=_dataFrame2MetricsList(df_D,str_volume_json,time=' 15:00:00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存volume 数据
+
+        str_volume_json['tags']['period']='h1'
+        str_price_json['tags']['period']='h1'
+        str_price_json['value']='open'
+        str_price_json['tags']['price']='open'
+        result=_dataFrame2MetricsList(df_H1,str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据  
+        str_price_json['value']='close'
+        str_price_json['tags']['price']='close'
+        result=_dataFrame2MetricsList(df_H1,str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据  
+        str_price_json['value']='high'
+        str_price_json['tags']['price']='high'
+        result=_dataFrame2MetricsList(df_H1,str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据  
+        str_price_json['value']='low'
+        str_price_json['tags']['price']='low'
+        result=_dataFrame2MetricsList(df_H1,str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据  
+        result=_dataFrame2MetricsList(df_H1,str_volume_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存volume 数据
+
+        str_volume_json['tags']['period']='m30'
+        str_price_json['tags']['period']='m30'
+        str_price_json['value']='open'
+        str_price_json['tags']['price']='open'
+        result=_dataFrame2MetricsList(df_M30,str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据  
+        str_price_json['value']='close'
+        str_price_json['tags']['price']='close'
+        result=_dataFrame2MetricsList(df_M30,str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据  
+        str_price_json['value']='high'
+        str_price_json['tags']['price']='high'
+        result=_dataFrame2MetricsList(df_M30,str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
+        database.insertList(result)                 #保存security.price 数据  
+        str_price_json['value']='low'
+        str_price_json['tags']['price']='low'
         result=_dataFrame2MetricsList(df_M30,str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
         database.insertList(result)                 #保存security.price 数据  
         result=_dataFrame2MetricsList(df_M30,str_volume_json,time=':00')  #转换数据成可供opentsdb输入的list
         database.insertList(result)                 #保存volume 数据
     pass
+
 
 def fetchAllStocksHistoryTickData():    
     """
@@ -82,16 +225,32 @@ def fetchAllStocksHistoryTickData():
         同时把数据存到数据库。
         这个函数应该只运行一次        
     """
+    str_price_json={
+        'metric':'security.price',
+        'time':'time',
+        'value':'price',
+        'code':'code',
+        'tags':{
+            'period': 'tick'
+        }
+    }
+    str_volume_json={
+        'metric':'security.volume',
+        'time':'time',
+        'value':'volume',
+        'code':'code',
+        'tags':{
+            'period':'tick',
+            'type': True
+        }
+    }
+
     today=dt.now()
     label=False
     today=dt(today.year, today.month, today.day)
-    delta=td(1,0,0)                                  #间隔一天
-    str_volume_json['tags']['period']='tick'
-    str_volume_json['time']='time'
-    str_volume_json['tags']['type']=True
-    str_price_json['time']='time'
-    str_price_json['value']='price'
-    for i,t in config.StocksList.items():
+    delta=td(1,0,0)                                 #间隔一天
+    
+    for i in config.stolist:
         date=dt(2013,1,1)
         while date<today:
             timestr=dt.strftime(date,'%Y-%m-%d')
@@ -114,15 +273,32 @@ def fetchAllStocksTodayTickData():
         获取所有的股票当日的成交明细数据，
         同时把数据存到数据库。        
     """   
-    str_volume_json['tags']['period']='tick'
-    str_volume_json['time']='time'
-    str_volume_json['tags']['type']=True
-    str_price_json['time']='time'
-    str_price_json['value']='price'
+    str_price_json={
+        'metric':'security.price',
+        'time':'time',
+        'value':'price',
+        'code':'code',
+        'tags':{
+            'period': 'tick'
+
+        }
+    }
+
+    str_volume_json={
+        'metric':'security.volume',
+        'time':'time',
+        'value':'volume',
+        'code':'code',
+        'tags':{
+            'period':'tick',
+            'type': True
+        }
+    }
+
     now=dt.now()
     date=dt(now.year,now.month,now.day)
     timestr=dt.strftime(date,'%Y-%m-%d')
-    for i,t in config.StocksList.items():
+    for i in config.stolist:
         df=ts.get_today_ticks(i)        
         timestr=timestr+' '
         if not df.iloc[0,0].startswith('alert'):            
@@ -134,33 +310,6 @@ def fetchAllStocksTodayTickData():
         database.insertList(result)
     pass
 
-def fetchAllStocksTodayNotTickData():
-    for i,t in config.StocksList.items():
-        df_D=ts.get_k_data(i,ktype='D')
-        df_H1=ts.get_k_data(i,ktype='60')
-        df_M30=ts.get_k_data(i,ktype='30')
-
-        MongodbJson[i]['dayEnd']   = df_D.iloc[-1,0]
-        MongodbJson[i]['h1End']   = df_D.iloc[-1,0]
-        MongodbJson[i]['m30End']   = df_D.iloc[-1,0]
-
-        result=_dataFrame2MetricsList(df_D.tail(2),str_price_json,time=' 15:00:00')  #转换数据成可供opentsdb输入的list
-        database.insertList(result)                 #保存security.price 数据 
-        result=_dataFrame2MetricsList(df_D.tail(2),str_volume_json,time=' 15:00:00')  #转换数据成可供opentsdb输入的list
-        database.insertList(result)                 #保存volume 数据
-
-        str_volume_json['tags']['period']='h1'
-        result=_dataFrame2MetricsList(df_H1.tail(10),str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
-        database.insertList(result)                 #保存security.price 数据  
-        result=_dataFrame2MetricsList(df_H1.tail(10),str_volume_json,time=':00')  #转换数据成可供opentsdb输入的list
-        database.insertList(result)                 #保存volume 数据
-
-        str_volume_json['tags']['period']='m30'
-        result=_dataFrame2MetricsList(df_M30.tail(20),str_price_json,time=':00')  #转换数据成可供opentsdb输入的list
-        database.insertList(result)                 #保存security.price 数据  
-        result=_dataFrame2MetricsList(df_M30.tail(20),str_volume_json,time=':00')  #转换数据成可供opentsdb输入的list
-        database.insertList(result) 
-
 
 def fetchAllStocksCurrentTickData():    
     """
@@ -169,7 +318,7 @@ def fetchAllStocksCurrentTickData():
 
     """  
 
-    for i,t in config.StocksList.items():
+    for i in config.stolist:
         df=ts.get_realtime_quotes(i)
 
     pass
@@ -186,7 +335,7 @@ def _dataFrame2MetricsList(df,str_json,date='',time='',code=''):
         else:
             str_json['tags']['code']=row[str_json['code']]
 
-        if str_json['tags'].get('type'):
+        if str_json['tags'].get('type'):  #tick data will has type, shows buy/sell
             str_json['tags']['type']=row['type']
         data.append({
             "metric": str_json['metric'],
@@ -198,4 +347,4 @@ def _dataFrame2MetricsList(df,str_json,date='',time='',code=''):
 
 if __name__ == '__main__':
     fetchAllStocksHistoryData()     #this function should excute only once.
-    fetchAllStocksHistoryTickData() #this function should excute only once.
+    # fetchAllStocksHistoryTickData() #this function should excute only once.
