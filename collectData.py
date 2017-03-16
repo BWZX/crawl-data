@@ -334,9 +334,9 @@ def fetchAllStocksCurrentTickData():
     pass
 
 def _dataFrame2MetricsList(df,str_json,date='',time='',code=''):
-    data=[]
+    data=[]    
 
-    if df.iloc[0,0].startswith('alert'):
+    if df is None or df.iloc[0,0].startswith('alert'):
         return data
 
     for index, row in df.iterrows():
