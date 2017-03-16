@@ -129,6 +129,7 @@ def fetchAllStocksHistoryData():
         database.insertList(result)                 #保存security.price 数据  
         result=_dataFrame2MetricsList(df_M30,str_volume_json,time=':00')  #转换数据成可供opentsdb输入的list
         database.insertList(result)                 #保存volume 数据
+        print(i)
         with open('progress.ini','w') as f:
             f.write(str(i))
     pass
