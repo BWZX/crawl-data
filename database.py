@@ -10,26 +10,30 @@ import os, time
 
 
 def insertList(data): 
-    printmsg=data[1]
-    printmsg='code={code}, period={period}, price={price}'.format(code=printmsg['tags'].get('code'),period=printmsg['tags'].get('period'),price=printmsg['tags'].get('price'))
     if not data:   
         return
 
+    printmsg=data[1]
+    printmsg='code={code}, period={period}, price={price}'.format(code=printmsg['tags'].get('code'),period=printmsg['tags'].get('period'),price=printmsg['tags'].get('price'))    
     def insertMetrics(metric):
         url='http://10.8.0.5:4242/api/put'
         # print(metric)
         request=urllib.request.Request(url)   
         tempdt = json.dumps(metric)  
-        tempdt=bytes(tempdt,'utf8') 
-        result=urllib.request.urlopen(request, tempdt)
-        feedback=str(result.getcode())        
-        if feedback == '204' or '200':
-            return
+        tempdt=bytes(tempdt,'utf8')
+        try:
+            result=urllib.request.urlopen(request, tempdt)
+            feedback=str(result.getcode())        
+            if feedback == '204' or '200':
+                return
             # print(feedback+' '+printmsg)
-        else:
-            # print(feedback,'  something wrong.')
-            insertMetrics(metric) # if this insertion fail somehow, insert it again.
-        pass
+            else:
+                # print(feedback,'  something wrong.')
+                insertMetrics(metric) # if this insertion fail somehow, insert it again.            
+                pass
+        except Exception as e:
+            insertMetrics(metric)
+        
 
     index=0
     length=len(data)
