@@ -8,7 +8,7 @@ from datetime import datetime as dt, timedelta as td
 import pandas as pd
 # from time_series.crawl_data import database
 import database
-import mongoModel as mdb
+from mongoModel import *
 
 stolist=config.stolist
 try:
@@ -19,7 +19,11 @@ try:
 except Exception:
     pass
 
-exchange = mdb.Exchange.objects.raw({'name':'沪深股市'}).all()[0]._id
+exchange = ''
+try:
+    exchange=Exchange.objects.get({'name':'沪深股市'})
+except Exchange.DoesNotExist:
+    exchange=Exchange('沪深股市').save()
 
 MongodbJson={}     #输出数据爬取的开始点和结束点
 try:
@@ -264,7 +268,7 @@ def fetchAllStocksHistoryTickData():
     delta=td(1,0,0)                                 #间隔一天
     
     for i in stolist:
-        date=dt(2004,6,1)
+        date=dt(2004,4,5)
         label=False
         while date<today:
             timestr=dt.strftime(date,'%Y-%m-%d')
@@ -277,8 +281,8 @@ def fetchAllStocksHistoryTickData():
             if not label:             #提取tickStart
                 if not df.iloc[0,0].startswith('alert'):
                     label=True
-                    sec=mdb.Securities(config.StockList[i], i, exchange).save()
-                    mdb.TimeSeries(sec, 'security.price','tick', timestr+df.iloc[-1,0])
+                    sec=Securities(config.StocksList[i], i, exchange).save()
+                    TimeSeries(sec, 'security.price','tick', timestr+df.iloc[-1,0])
                     # MongodbJson[i]['tickStart']=timestr+df.iloc[-1,0]
             result=_dataFrame2MetricsList(df,str_volume_json,date=timestr,code=i)
             database.insertList(result)

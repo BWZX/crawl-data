@@ -38,9 +38,10 @@ class TimeSeries(MongoModel):
 
 
 if __name__ == '__main__':
-    # exchange = Exchange(name='name').save()
-    exchange=Exchange.objects.raw({'name':'沪深股市'}).all()[0]._id
-    print(exchange)
+    # exchange = Exchange.objects.get({'name':'沪深股市'})
+    # Exchange(name='沪深股市').save()
+    # exchange=Exchange.objects.raw({'name':'沪深股市'}).all()[0]._id
+    # print(exchange)
     # Securities('test','test',exchange).save()
     
     
