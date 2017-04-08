@@ -8,6 +8,7 @@ from datetime import datetime as dt, timedelta as td
 import pandas as pd
 # from time_series.crawl_data import database
 import database
+import mongoModel as mdb
 
 stolist=config.stolist
 try:
@@ -18,6 +19,7 @@ try:
 except Exception:
     pass
 
+exchange = mdb.Exchange.objects.raw({'name':'沪深股市'}).all()[0]._id
 
 MongodbJson={}     #输出数据爬取的开始点和结束点
 try:
@@ -262,21 +264,31 @@ def fetchAllStocksHistoryTickData():
     delta=td(1,0,0)                                 #间隔一天
     
     for i in stolist:
-        date=dt(2013,1,1)
+        date=dt(2004,6,1)
+        label=False
         while date<today:
             timestr=dt.strftime(date,'%Y-%m-%d')
-            df=ts.get_tick_data(i,date=timestr)            
+            df=ts.get_tick_data(i,date=timestr) 
+
+            if df.iloc[0,0].startswith('alert'):  
+                continue
+
             timestr=timestr+' '
             if not label:             #提取tickStart
                 if not df.iloc[0,0].startswith('alert'):
                     label=True
-                    MongodbJson[i]['tickStart']=timestr+df.iloc[-1,0]
+                    sec=mdb.Securities(config.StockList[i], i, exchange).save()
+                    mdb.TimeSeries(sec, 'security.price','tick', timestr+df.iloc[-1,0])
+                    # MongodbJson[i]['tickStart']=timestr+df.iloc[-1,0]
             result=_dataFrame2MetricsList(df,str_volume_json,date=timestr,code=i)
             database.insertList(result)
             result=_dataFrame2MetricsList(df,str_price_json,date=timestr,code=i)
             database.insertList(result)
             date=date+delta
-            pass        
+            pass 
+
+        with open('progress.ini','w') as f:
+            f.write(str(i))       
     pass
 
 def fetchAllStocksTodayTickData():    
@@ -356,5 +368,5 @@ def _dataFrame2MetricsList(df,str_json,date='',time='',code=''):
     return data
 
 if __name__ == '__main__':
-    fetchAllStocksHistoryData()     #this function should excute only once.
-    # fetchAllStocksHistoryTickData() #this function should excute only once.
+    #fetchAllStocksHistoryData()     #this function should excute only once.
+    fetchAllStocksHistoryTickData() #this function should excute only once.
