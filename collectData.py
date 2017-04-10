@@ -268,15 +268,16 @@ def fetchAllStocksHistoryTickData():
     delta=td(1,0,0)                                 #间隔一天
     
     for i in stolist:
-        date=dt(2004,4,5)
+        date=dt(2004,10,8)
         label=False
         while date<today:
             timestr=dt.strftime(date,'%Y-%m-%d')
             df=ts.get_tick_data(i,date=timestr) 
 
-            if df.iloc[0,0].startswith('alert'):  
+            if df.iloc[0,0].startswith('alert'):
+                date=date+delta  
                 continue
-
+            print(timestr)
             timestr=timestr+' '
             if not label:             #提取tickStart
                 if not df.iloc[0,0].startswith('alert'):
