@@ -6,6 +6,8 @@ import config
 import json
 from datetime import datetime as dt, timedelta as td
 import pandas as pd
+from multiprocessing import Pool
+import os, time
 # from time_series.crawl_data import database
 import database
 from mongoModel import *
@@ -262,22 +264,50 @@ def fetchAllStocksHistoryTickData():
         }
     }
 
+    
+
     today=dt.now()
     label=False
     today=dt(today.year, today.month, today.day)
     delta=td(1,0,0)                                 #间隔一天
     
+    def fetchDt(code, time):
+        df=ts.get_tick_data(code,time)
+        return {'data':df, 'timestr':time, 'code':code}
+
+    def insert2db(data):
+        data['timestr']=data['timestr']+' '
+        result=_dataFrame2MetricsList(data['df'],str_volume_json,date=data['timestr'],code=data['code'])
+        database.insertList(result)
+        result=_dataFrame2MetricsList(data['df'],str_price_json,date=data['timestr'],code=data['code'])
+        database.insertList(result)
+
+    pool=Pool(10)
+
     for i in stolist:
-        date=dt(2004,10,8)
+        date=dt(2004,10,5)
         label=False
+
         while date<today:
+            if label:                
+                for d in range(14):
+                    timestr=dt.strftime(date+delta*d,'%Y-%m-%d')
+                    print(timestr)
+                    pool.apply_async(fetchDt, args=(i,times[d],), callback=insert2db)
+            continue
+
+
             timestr=dt.strftime(date,'%Y-%m-%d')
+            
+            print(timestr+' not fast mood')
+
             df=ts.get_tick_data(i,date=timestr) 
 
             if df.empty or df.iloc[0,0].startswith('alert'):
                 date=date+delta  
                 continue
-            print(timestr)
+            # print(timestr)
+
             timestr=timestr+' '
             if not label:             #提取tickStart
                 if not df.iloc[0,0].startswith('alert'):
@@ -297,7 +327,10 @@ def fetchAllStocksHistoryTickData():
             pass 
 
         with open('progress.ini','w') as f:
-            f.write(str(i))       
+            f.write(str(i)) 
+
+    pool.close()
+    pool.join()      
     pass
 
 def fetchAllStocksTodayTickData():    

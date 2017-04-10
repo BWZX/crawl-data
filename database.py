@@ -13,7 +13,7 @@ def insertList(data):
     if not data:   
         return
 
-    printmsg=data[1]
+    printmsg=data[0]
     printmsg='code={code}, period={period}, price={price}'.format(code=printmsg['tags'].get('code'),period=printmsg['tags'].get('period'),price=printmsg['tags'].get('price'))    
     def insertMetrics(metric):
         url='http://10.8.0.5:4242/api/put'
@@ -49,7 +49,7 @@ def insertList(data):
         index=index+30
     pass
     
-    p = Pool(20)
+    p = Pool(5)
     for dt in dataList:
         p.apply_async(insertMetrics, args=(dt,))
         # insertMetrics(dt)    
