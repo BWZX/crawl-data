@@ -274,7 +274,7 @@ def fetchAllStocksHistoryTickData():
             timestr=dt.strftime(date,'%Y-%m-%d')
             df=ts.get_tick_data(i,date=timestr) 
 
-            if df.iloc[0,0].startswith('alert'):
+            if df.empty or df.iloc[0,0].startswith('alert'):
                 date=date+delta  
                 continue
             print(timestr)
@@ -282,7 +282,11 @@ def fetchAllStocksHistoryTickData():
             if not label:             #提取tickStart
                 if not df.iloc[0,0].startswith('alert'):
                     label=True
-                    sec=Securities(config.StocksList[i], i, exchange).save()
+                    try:
+                        sec=Securities.objects.get({'code':i})
+                    except Securities.DoesNotExist:
+                        sec=Securities(config.StocksList[i], i, exchange).save()
+
                     TimeSeries(sec, 'security.price','tick', timestr+df.iloc[-1,0])
                     # MongodbJson[i]['tickStart']=timestr+df.iloc[-1,0]
             result=_dataFrame2MetricsList(df,str_volume_json,date=timestr,code=i)

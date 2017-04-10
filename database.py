@@ -32,6 +32,7 @@ def insertList(data):
                 insertMetrics(metric) # if this insertion fail somehow, insert it again.            
                 pass
         except Exception as e:
+            print(e+' ssss')
             insertMetrics(metric)
         
 
@@ -50,8 +51,8 @@ def insertList(data):
     
     p = Pool(20)
     for dt in dataList:
-        # p.apply_async(insertMetrics, args=(dt,))
-        insertMetrics(dt)    
+        p.apply_async(insertMetrics, args=(dt,))
+        # insertMetrics(dt)    
     p.close()
     p.join()
 
