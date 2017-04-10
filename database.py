@@ -48,13 +48,21 @@ def insertList(data):
             loop=False
         index=index+30
     pass
-    
-    p = Pool(5)
+
+    def callbackPrint(msg):
+        print('this insert complete')
+
+    def error_callbackPrint(msg):
+        print(msg, 'insert data fail')
+
+    # p = Pool(2)
     for dt in dataList:
-        p.apply_async(insertMetrics, args=(dt,))
-        # insertMetrics(dt)    
-    p.close()
-    p.join()
+        # print(dt)
+        # p.apply_async(insertMetrics, args=(dt,),callback=callbackPrint, error_callback=error_callbackPrint)         
+        insertMetrics(dt)
+    # p.close()
+    # p.join()
+
 
 def getPriceData(code, period, price):    
     url='http://10.8.0.5:4242/api/query?start=1980/01/01-00:00:00&m=none:security.price%7Bperiod={period},code={code},price={price}%7D'.format(period=period, code=code, price=price)    

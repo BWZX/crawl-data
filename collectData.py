@@ -16,7 +16,7 @@ stolist=config.stolist
 try:
     with open('progress.ini','r') as f:
         now_at=f.read()
-        print(now_at)
+        print("now_at ",now_at)
         stolist=stolist[stolist.index(now_at)+1:]
 except Exception:
     pass
@@ -274,15 +274,22 @@ def fetchAllStocksHistoryTickData():
     def fetchDt(code, time):
         df=ts.get_tick_data(code,time)
         return {'data':df, 'timestr':time, 'code':code}
-
+    def printError(msg):
+        print(msg)
+        pass
     def insert2db(data):
         data['timestr']=data['timestr']+' '
+
+        if data['df'].empty or data['df'].iloc[0,0].startswith('alert'):
+            print('no data or failed')
+            date=date+delta  
+
         result=_dataFrame2MetricsList(data['df'],str_volume_json,date=data['timestr'],code=data['code'])
         database.insertList(result)
         result=_dataFrame2MetricsList(data['df'],str_price_json,date=data['timestr'],code=data['code'])
         database.insertList(result)
 
-    pool=Pool(10)
+    pool=Pool(2)
 
     for i in stolist:
         date=dt(2004,10,5)
@@ -290,20 +297,22 @@ def fetchAllStocksHistoryTickData():
 
         while date<today:
             if label:                
-                for d in range(14):
-                    timestr=dt.strftime(date+delta*d,'%Y-%m-%d')
-                    print(timestr)
-                    pool.apply_async(fetchDt, args=(i,times[d],), callback=insert2db)
-            continue
+                for d in range(14):                    
+                    timestr=dt.strftime(date,'%Y-%m-%d')
+                    print(timestr+' fast mood')
+                    pool.apply_async(fetchDt, args=(i,timestr,), callback=insert2db, error_callback=printError)
+                    date=date+delta
+                continue
 
 
             timestr=dt.strftime(date,'%Y-%m-%d')
-            
+
             print(timestr+' not fast mood')
 
             df=ts.get_tick_data(i,date=timestr) 
 
             if df.empty or df.iloc[0,0].startswith('alert'):
+                print('no data or failed')
                 date=date+delta  
                 continue
             # print(timestr)
