@@ -54,12 +54,12 @@ def insertList(data):
         index=index+30
     pass
 
-    p = Pool(4)
+    # p = Pool(4)
     for dt in dataList:
-        p.apply_async(insertMetrics, args=(dt,printmsg,),callback=callbackPrint, error_callback=error_callbackPrint)         
-        # insertMetrics(dt)
-    p.close()
-    p.join()
+        # p.apply_async(insertMetrics, args=(dt,printmsg,),callback=callbackPrint, error_callback=error_callbackPrint)         
+        insertMetrics(dt, printmsg)
+    # p.close()
+    # p.join()
 
 
 def getPriceData(code, period, price):    

@@ -238,12 +238,46 @@ def fetchAllStocksTodayNotTickData():
     pass
 ######################################################################
 def fetchDt(code, time):
-        df=ts.get_tick_data(code,time)
-        print('fetchdata succeed!')
-        return {'data':df, 'timestr':time, 'code':code}
+    str_price_json={
+        'metric':'security.price',
+        'time':'time',
+        'value':'price',
+        'code':'code',
+        'tags':{
+            'period': 'tick'
+        }
+    }
+    str_volume_json={
+        'metric':'security.volume',
+        'time':'time',
+        'value':'volume',
+        'code':'code',
+        'tags':{
+            'period':'tick',
+            'type': True
+        }
+    }
+
+    df=ts.get_tick_data(code,time)
+
+    print('fetchdata succeed!')
+    
+    timestr = time+' '
+
+    if df.empty or df.iloc[0,0].startswith('alert'):
+        print('no data or failed')
+        return
+    print("now insert data to db")
+    result=_dataFrame2MetricsList(df,str_volume_json,date=timestr,code=code)
+    database.insertList(result)
+    result=_dataFrame2MetricsList(df,str_price_json,date=timestr,code=code)
+    database.insertList(result)
+    print('insert completed!')
+
 def printError(msg):
     print(msg,' fetch data failed!')
     pass
+    
 ########################################################################
 def fetchAllStocksHistoryTickData():    
     """
@@ -270,28 +304,11 @@ def fetchAllStocksHistoryTickData():
             'type': True
         }
     }
-
-    
-
     today=dt.now()
     label=False
     today=dt(today.year, today.month, today.day)
     delta=td(1,0,0)                                 #间隔一天
-    
-
-    def insert2db(data):
-        data['timestr']=data['timestr']+' '
-
-        if data['df'].empty or data['df'].iloc[0,0].startswith('alert'):
-            print('no data or failed')
-            return
-        print("now insert data to db")
-        result=_dataFrame2MetricsList(data['df'],str_volume_json,date=data['timestr'],code=data['code'])
-        database.insertList(result)
-        result=_dataFrame2MetricsList(data['df'],str_price_json,date=data['timestr'],code=data['code'])
-        database.insertList(result)
-
-    
+        
     for i in stolist:
         date=dt(2004,10,5)
         label=False
@@ -302,12 +319,11 @@ def fetchAllStocksHistoryTickData():
                 for d in range(14):
                     timestr=dt.strftime(date,'%Y-%m-%d')
                     print(timestr+' fast mood')
-                    pool.apply_async(fetchDt, args=(i,timestr,), callback=insert2db, error_callback=printError)
+                    pool.apply_async(fetchDt, args=(i,timestr,), error_callback=printError)
                     date=date+delta
                 pool.close()
                 pool.join()
                 continue
-
 
             timestr=dt.strftime(date,'%Y-%m-%d')
 
@@ -341,9 +357,6 @@ def fetchAllStocksHistoryTickData():
 
         with open('progress.ini','w') as f:
             f.write(str(i)) 
-
-    pool.close()
-    pool.join()      
     pass
 
 def fetchAllStocksTodayTickData():    
