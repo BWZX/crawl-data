@@ -285,7 +285,7 @@ def fetchAllStocksHistoryTickData():
         if data['df'].empty or data['df'].iloc[0,0].startswith('alert'):
             print('no data or failed')
             return
-
+        print("now insert data to db")
         result=_dataFrame2MetricsList(data['df'],str_volume_json,date=data['timestr'],code=data['code'])
         database.insertList(result)
         result=_dataFrame2MetricsList(data['df'],str_price_json,date=data['timestr'],code=data['code'])
@@ -298,7 +298,7 @@ def fetchAllStocksHistoryTickData():
 
         while date<today:
             if label: 
-                pool=Pool(10)               
+                pool=Pool(14)               
                 for d in range(14):
                     timestr=dt.strftime(date,'%Y-%m-%d')
                     print(timestr+' fast mood')

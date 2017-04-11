@@ -28,6 +28,12 @@ def insertMetrics(metric,printmsg):
         print(e+' ssss')
         insertMetrics(metric)
 
+def callbackPrint(msg):
+        print('this insert complete')
+
+def error_callbackPrint(msg):
+    print(msg, 'insert data fail')
+
 def insertList(data): 
     if not data:   
         return
@@ -47,12 +53,6 @@ def insertList(data):
             loop=False
         index=index+30
     pass
-
-    def callbackPrint(msg):
-        print('this insert complete')
-
-    def error_callbackPrint(msg):
-        print(msg, 'insert data fail')
 
     p = Pool(4)
     for dt in dataList:
