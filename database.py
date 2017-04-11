@@ -8,6 +8,25 @@ import urllib, urllib.request
 from multiprocessing import Pool
 import os, time
 
+def insertMetrics(metric,printmsg):
+    url='http://10.8.0.5:4242/api/put'
+    # print(metric)
+    request=urllib.request.Request(url)   
+    tempdt = json.dumps(metric)  
+    tempdt=bytes(tempdt,'utf8')
+    try:
+        result=urllib.request.urlopen(request, tempdt)
+        feedback=str(result.getcode())        
+        if feedback == '204' or '200':
+            return
+        # print(feedback+' '+printmsg)
+        else:
+            # print(feedback,'  something wrong.')
+            insertMetrics(metric) # if this insertion fail somehow, insert it again.            
+            pass
+    except Exception as e:
+        print(e+' ssss')
+        insertMetrics(metric)
 
 def insertList(data): 
     if not data:   
@@ -15,27 +34,7 @@ def insertList(data):
 
     printmsg=data[0]
     printmsg='code={code}, period={period}, price={price}'.format(code=printmsg['tags'].get('code'),period=printmsg['tags'].get('period'),price=printmsg['tags'].get('price'))    
-    def insertMetrics(metric):
-        url='http://10.8.0.5:4242/api/put'
-        # print(metric)
-        request=urllib.request.Request(url)   
-        tempdt = json.dumps(metric)  
-        tempdt=bytes(tempdt,'utf8')
-        try:
-            result=urllib.request.urlopen(request, tempdt)
-            feedback=str(result.getcode())        
-            if feedback == '204' or '200':
-                return
-            # print(feedback+' '+printmsg)
-            else:
-                # print(feedback,'  something wrong.')
-                insertMetrics(metric) # if this insertion fail somehow, insert it again.            
-                pass
-        except Exception as e:
-            print(e+' ssss')
-            insertMetrics(metric)
-        
-
+    
     index=0
     length=len(data)
     dataList=[]
@@ -55,13 +54,12 @@ def insertList(data):
     def error_callbackPrint(msg):
         print(msg, 'insert data fail')
 
-    # p = Pool(2)
+    p = Pool(4)
     for dt in dataList:
-        # print(dt)
-        # p.apply_async(insertMetrics, args=(dt,),callback=callbackPrint, error_callback=error_callbackPrint)         
-        insertMetrics(dt)
-    # p.close()
-    # p.join()
+        p.apply_async(insertMetrics, args=(dt,printmsg,),callback=callbackPrint, error_callback=error_callbackPrint)         
+        # insertMetrics(dt)
+    p.close()
+    p.join()
 
 
 def getPriceData(code, period, price):    

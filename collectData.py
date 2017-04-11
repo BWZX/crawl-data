@@ -236,8 +236,15 @@ def fetchAllStocksTodayNotTickData():
         result=_dataFrame2MetricsList(df_M30,str_volume_json,time=':00')  #转换数据成可供opentsdb输入的list
         database.insertList(result)                 #保存volume 数据
     pass
-
-
+######################################################################
+def fetchDt(code, time):
+        df=ts.get_tick_data(code,time)
+        print('fetchdata succeed!')
+        return {'data':df, 'timestr':time, 'code':code}
+def printError(msg):
+    print(msg,' fetch data failed!')
+    pass
+########################################################################
 def fetchAllStocksHistoryTickData():    
     """
         获取所有的股票的成交明细历史数据，
@@ -271,37 +278,34 @@ def fetchAllStocksHistoryTickData():
     today=dt(today.year, today.month, today.day)
     delta=td(1,0,0)                                 #间隔一天
     
-    def fetchDt(code, time):
-        df=ts.get_tick_data(code,time)
-        return {'data':df, 'timestr':time, 'code':code}
-    def printError(msg):
-        print(msg)
-        pass
+
     def insert2db(data):
         data['timestr']=data['timestr']+' '
 
         if data['df'].empty or data['df'].iloc[0,0].startswith('alert'):
             print('no data or failed')
-            date=date+delta  
+            return
 
         result=_dataFrame2MetricsList(data['df'],str_volume_json,date=data['timestr'],code=data['code'])
         database.insertList(result)
         result=_dataFrame2MetricsList(data['df'],str_price_json,date=data['timestr'],code=data['code'])
         database.insertList(result)
 
-    pool=Pool(2)
-
+    
     for i in stolist:
         date=dt(2004,10,5)
         label=False
 
         while date<today:
-            if label:                
-                for d in range(14):                    
+            if label: 
+                pool=Pool(10)               
+                for d in range(14):
                     timestr=dt.strftime(date,'%Y-%m-%d')
                     print(timestr+' fast mood')
                     pool.apply_async(fetchDt, args=(i,timestr,), callback=insert2db, error_callback=printError)
                     date=date+delta
+                pool.close()
+                pool.join()
                 continue
 
 
