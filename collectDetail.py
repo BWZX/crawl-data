@@ -14,7 +14,7 @@ from mongoModel import *
 
 stolist=config.stolist
 try:
-    with open('progress.ini','r') as f:
+    with open('progressDetail.ini','r') as f:
         now_at=f.read()
         print("now_at ",now_at)
         stolist=stolist[stolist.index(now_at)+1:]
@@ -355,7 +355,7 @@ def fetchAllStocksHistoryTickData():
             date=date+delta
             pass 
 
-        with open('progress.ini','w') as f:
+        with open('progressDetail.ini','w') as f:
             f.write(str(i)) 
     pass
 
@@ -436,5 +436,5 @@ def _dataFrame2MetricsList(df,str_json,date='',time='',code=''):
     return data
 
 if __name__ == '__main__':
-    fetchAllStocksHistoryData()     #this function should excute only once.
-    #fetchAllStocksHistoryTickData() #this function should excute only once.
+    #fetchAllStocksHistoryData()     #this function should excute only once.
+    fetchAllStocksHistoryTickData() #this function should excute only once.

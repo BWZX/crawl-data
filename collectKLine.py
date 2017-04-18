@@ -14,7 +14,7 @@ from mongoModel import *
 
 stolist=config.stolist
 try:
-    with open('progress.ini','r') as f:
+    with open('progressKLine.ini','r') as f:
         now_at=f.read()
         print("now_at ",now_at)
         stolist=stolist[stolist.index(now_at)+1:]
@@ -138,7 +138,7 @@ def fetchAllStocksHistoryData():
         result=_dataFrame2MetricsList(df_M30,str_volume_json,time=':00')  #转换数据成可供opentsdb输入的list
         database.insertList(result)                 #保存volume 数据
         print(i)
-        with open('progress.ini','w') as f:
+        with open('progressKLine.ini','w') as f:
             f.write(str(i))
     pass
 
