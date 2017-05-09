@@ -10,7 +10,7 @@ from pymodm import connect, fields, MongoModel, EmbeddedMongoModel
 
 # Connect to MongoDB first. PyMODM supports all URI options supported by
 # PyMongo. Make sure also to specify a database in the connection string:
-connect('mongodb://124.205.43.244:27017/quant')
+connect('mongodb://127.0.0.1:27017/quant')
 
 class Exchange(MongoModel):
     name = fields.CharField()
@@ -53,8 +53,12 @@ class ShareRation(MongoModel):
     chuquanri = fields.CharField()
     dengjiri = fields.CharField()
     peigufangan = fields.FloatField()
-    peigujiage = fields.FloatField()
+    peigujiage = fields.FloatField()    
     jizhunguben = fields.FloatField()
+    
+    shijipeigushu = fields.FloatField()
+    shijipeigubili = fields.FloatField()
+
     
 
 if __name__ == '__main__':

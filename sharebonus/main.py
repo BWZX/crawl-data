@@ -5,7 +5,7 @@ import processData as pd
 import sys
 from mongoModel import *
 
-async def fetchData(callback = pd.processData):
+async def fetchData(session=None, callback = pd.processData):
     #set request url and parameters here or you can pass from outside. 
     
     #use s.** request a webside will keep-alive the connection automaticaly,
@@ -43,7 +43,7 @@ async def fetchData(callback = pd.processData):
             if not r:
                 continue
             data =  await r.text(encoding='gb2312')
-            data = await callback(data)
+            data = await callback(s, data)
 
             try:
                 print(data['shareCode'])
@@ -60,7 +60,7 @@ async def fetchData(callback = pd.processData):
                     ShareBonus(item['gupiao'], item['gonggaori'], item['chuquanchuxiri'], item['dengjiri'], item['songgu'], item['zhuanzeng'], item['paixi'], item['jingdu']).save()
                 for item in data['shareRation']:
                     item['gupiao']=sec
-                    ShareRation(item['gupiao'], item['gonggaori'], item['shangshiri'], item['chuquanri'], item['dengjiri'], item['peigufangan'], item['peigujiage'], item['jizhunguben']).save()
+                    ShareRation(item['gupiao'], item['gonggaori'], item['shangshiri'], item['chuquanri'], item['dengjiri'], item['peigufangan'], item['peigujiage'], item['jizhunguben'], item['shijipeigushu'], item['shijipeigubili']).save()
 
         # await asyncio.sleep(1)
         
