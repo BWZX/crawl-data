@@ -427,9 +427,14 @@ def _dataFrame2MetricsList(df,str_json,date='',time='',code=''):
 
         if str_json['tags'].get('type'):  #tick data will has type, shows buy/sell
             str_json['tags']['type']=row['type']
+
+        tmptime=row[str_json['time']]
+        if not tmptime[0].isdigit():
+            return data
+
         data.append({
             "metric": str_json['metric'],
-            "timestamp": int(dt.strptime(date+row[str_json['time']]+time,'%Y-%m-%d %H:%M:%S').timestamp()),
+            "timestamp": int(dt.strptime(date+tmptime+time,'%Y-%m-%d %H:%M:%S').timestamp()),
             "value": row[str_json['value']],
             "tags": str_json['tags']
         })

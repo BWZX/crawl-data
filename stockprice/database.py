@@ -9,7 +9,7 @@ from multiprocessing import Pool
 import os, time
 
 def insertMetrics(metric,printmsg):
-    url='http://10.8.0.5:4242/api/put'
+    url='http://127.0.0.1:4242/api/put'
     # print(metric)
     request=urllib.request.Request(url)   
     tempdt = json.dumps(metric)  
@@ -63,7 +63,7 @@ def insertList(data):
 
 
 def getPriceData(code, period, price):    
-    url='http://10.8.0.5:4242/api/query?start=1980/01/01-00:00:00&m=none:security.price%7Bperiod={period},code={code},price={price}%7D'.format(period=period, code=code, price=price)    
+    url='http://127.0.0.1:4242/api/query?start=1980/01/01-00:00:00&m=none:security.price%7Bperiod={period},code={code},price={price}%7D'.format(period=period, code=code, price=price)    
     print(url)
     request=urllib.request.Request(url)  
     result=urllib.request.urlopen(request, timeout=25)
