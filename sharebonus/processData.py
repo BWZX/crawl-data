@@ -2,8 +2,8 @@ import asyncio
 from pyquery import PyQuery as pq
 import config
 
-
-async def processData(s, data):
+@asyncio.coroutine
+def processData(s, data):
     '''
     data is from the http response in main module.
     '''
@@ -37,8 +37,8 @@ async def processData(s, data):
 
         nexturl = item('td').eq(-1)
         nexturl = 'http://vip.stock.finance.sina.com.cn'+nexturl('a').attr('href')
-        nextext = await s.get(nexturl)
-        nextext = await nextext.text(encoding='gb2312')
+        nextext = yield from s.get(nexturl)
+        nextext = yield from nextext.text(encoding='gb2312')
         d = pq(nextext)
         maintable = d('table#sharebonusdetail')
         bili = maintable('tr').eq(-4)

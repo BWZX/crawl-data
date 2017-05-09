@@ -5,15 +5,16 @@ import processData as pd
 import sys
 from mongoModel import *
 
-async def fetchData(session=None, callback = pd.processData):
+@asyncio.coroutine
+def fetchData(session=None, callback = pd.processData):
     #set request url and parameters here or you can pass from outside. 
     
     #use s.** request a webside will keep-alive the connection automaticaly,
     #so you can set multi request here without close the connection 
     #while in the same domain.
     #i.e. 
-    #await s.get('***/page1')
-    #await s.get('***/page2')
+    #yield from s.get('***/page1')
+    #yield from s.get('***/page2')
     ######################################################################## 
     cookies = {
         
@@ -36,14 +37,14 @@ async def fetchData(session=None, callback = pd.processData):
 
         for coroutine in asyncio.as_completed(coroutines):             
             try:
-                r = await coroutine
+                r = yield from coroutine
             except Exception:
-                await asyncio.sleep(2)
-                r = await coroutine
+                # yield from asyncio.sleep(2)
+                r = yield from coroutine
             if not r:
                 continue
-            data =  await r.text(encoding='gb2312')
-            data = await callback(s, data)
+            data = yield from r.text(encoding='gb2312')
+            data = yield from callback(s, data)
 
             try:
                 print(data['shareCode'])
@@ -62,7 +63,7 @@ async def fetchData(session=None, callback = pd.processData):
                     item['gupiao']=sec
                     ShareRation(item['gupiao'], item['gonggaori'], item['shangshiri'], item['chuquanri'], item['dengjiri'], item['peigufangan'], item['peigujiage'], item['jizhunguben'], item['shijipeigushu'], item['shijipeigubili']).save()
 
-        # await asyncio.sleep(1)
+        # yield from asyncio.sleep(1)
         
 
 ################################################################
