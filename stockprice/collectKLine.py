@@ -10,6 +10,8 @@ from multiprocessing import Pool
 import os, time
 # from time_series.crawl_data import database
 import database
+import sys
+sys.path.append('../publicstuff')
 from mongoModel import *
 
 stolist=config.stolist

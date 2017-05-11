@@ -10,16 +10,72 @@ from pymodm import connect, fields, MongoModel, EmbeddedMongoModel
 
 # Connect to MongoDB first. PyMODM supports all URI options supported by
 # PyMongo. Make sure also to specify a database in the connection string:
-connect('mongodb://127.0.0.1:27017/quant')
+connect('mongodb://10.8.0.5:27017/quant')
 
 class Exchange(MongoModel):
     name = fields.CharField()
+
+    # class Meta:
+    #     final = True
 
 class Securities(MongoModel):
     name = fields.CharField()
     code = fields.CharField()
     exchange_id = fields.ReferenceField(Exchange)
     industry = fields.CharField()
+
+    # class Meta:
+    #     final = True
+
+class PriceEvent(MongoModel):
+    security_id = fields.ReferenceField(Securities)
+    event_type = fields.IntegerField()
+    change_at = fields.IntegerField()
+    price_before = fields.FloatField()
+    price_after = fields.FloatField()
+    ratio = fields.FloatField()
+
+    class Meta:
+        final = True
+
+class TimeSeries(MongoModel):
+    security = fields.ReferenceField(Securities)
+    metric = fields.CharField()
+    tag = fields.CharField()
+    start_at = fields.IntegerField()
+    end_at = fields.IntegerField()
+
+    class Meta:
+        final = True
+
+class ShareBonus(MongoModel):
+    gupiao = fields.ReferenceField(Securities)
+    gonggaori = fields.CharField()
+    chuquanchuxiri = fields.CharField()
+    dengjiri = fields.CharField()
+    songgu = fields.FloatField()
+    zhuanzeng = fields.FloatField()
+    paixi = fields.FloatField()
+    jingdu = fields.CharField()
+
+    class Meta:
+        final = True
+
+class ShareRation(MongoModel):
+    gupiao = fields.ReferenceField(Securities)
+    gonggaori = fields.CharField()
+    shangshiri = fields.CharField()
+    chuquanri = fields.CharField()
+    dengjiri = fields.CharField()
+    peigufangan = fields.FloatField()
+    peigujiage = fields.FloatField()    
+    jizhunguben = fields.FloatField()
+    
+    shijipeigushu = fields.FloatField()
+    shijipeigubili = fields.FloatField()
+
+    class Meta:
+        final = True
 
 class Finance(MongoModel):
     security = fields.ReferenceField(Securities)
@@ -77,6 +133,9 @@ class Finance(MongoModel):
     pre_eps = fields.FloatField()       #上年同期每股收益
     range = fields.FloatField()       #业绩变动范围
 
+    class Meta:
+        final = True
+
 arglist=(    
     'time',
     'esp',
@@ -130,13 +189,20 @@ arglist=(
     'range'
 )
 
+    
+
 if __name__ == '__main__':
-    # exchange = Exchange.objects.get({'name':'沪深股市'})
-    # Exchange(name='沪深股市').save()
+    
+
+
+    Exchange(name='j股市').save()
     # exchange=Exchange.objects.raw({'name':'沪深股市'}).all()[0]._id
     # print(exchange)
     # Securities('test','test',exchange).save()
-    
-    
-    for obj in Securities.objects.all():
+    # for post in Securities.objects.raw({'code': '000001'}):
+    #     print(post.name + ' by ' + post.code)
+
+    for obj in Exchange.objects.all():
         print(obj.name)
+    # for obj in Securities.objects.all():
+    #     print(obj.name)

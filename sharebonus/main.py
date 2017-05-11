@@ -3,6 +3,7 @@ import asyncio
 import config
 import processData as pd
 import sys
+sys.path.append('../publicstuff')
 from mongoModel import *
 
 @asyncio.coroutine
