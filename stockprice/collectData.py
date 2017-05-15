@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+import sys
+sys.path.append('../publicstuff')
 import tushare as ts
-import config 
 import json
 from datetime import datetime as dt, timedelta as td
 import pandas as pd
@@ -10,9 +10,8 @@ from multiprocessing import Pool
 import os, time
 # from time_series.crawl_data import database
 import database
-import sys
-sys.path.append('../publicstuff')
 from mongoModel import *
+import config 
 
 stolist=config.stolist
 try:

@@ -1,10 +1,10 @@
-import aiohttp
-import asyncio
-import config
-import processData as pd
 import sys
 sys.path.append('../publicstuff')
+import aiohttp
+import asyncio
+import processData as pd
 from mongoModel import *
+import config
 
 @asyncio.coroutine
 def fetchData(session=None, callback = pd.processData):
@@ -48,29 +48,30 @@ def fetchData(session=None, callback = pd.processData):
             data = yield from callback(s, data)
 
             try:
-                print(data['shareCode'])
+                # print(data['shareCode'])
                 sec=Securities.objects.get({'code':data['shareCode']})
             except Securities.DoesNotExist:
-                print("the share code isn't save yet, is odd.")
-                exit()
+                # print("the share code isn't save yet, is odd.")
+                # exit()
+                exc=Exchange.objects.get({'name':'沪深股市'})
+                sec=Securities(config.StocksList[data['shareCode']], data['shareCode'], exc).save()
 
             try:
-                bns = ShareBonus.objects.get({'gupiao':sec, 'gonggaori': data['shareBonus'][0]['gonggaori']})
+                # pass
+                print(data['shareBonus'][0]['gonggaori'],' and ',sec._id)
+                bns = ShareBonus.objects.get({'gupiao':sec._id, 'gonggaori': data['shareBonus'][0]['gonggaori']})
             except ShareBonus.DoesNotExist:
-                for item in data['ShareBonus']:
+                for item in data['shareBonus']:
                     item['gupiao']=sec
                     ShareBonus(item['gupiao'], item['gonggaori'], item['chuquanchuxiri'], item['dengjiri'], item['songgu'], item['zhuanzeng'], item['paixi'], item['jingdu']).save()
-                for item in data['shareRation']:
+                for item in data['rationBonus']:
                     item['gupiao']=sec
                     ShareRation(item['gupiao'], item['gonggaori'], item['shangshiri'], item['chuquanri'], item['dengjiri'], item['peigufangan'], item['peigujiage'], item['jizhunguben'], item['shijipeigushu'], item['shijipeigubili']).save()
+                print('rough complete.')
 
         # yield from asyncio.sleep(1)
-        
-
 ################################################################
 ################################################################
-
-    
 
 if __name__ == '__main__':    
     loop = asyncio.get_event_loop()    

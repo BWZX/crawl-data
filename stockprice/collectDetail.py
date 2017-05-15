@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+import sys
+sys.path.append('../publicstuff')
 import tushare as ts
 import config 
 import json
@@ -348,7 +349,7 @@ def fetchAllStocksHistoryTickData():
                     except Securities.DoesNotExist:
                         sec=Securities(config.StocksList[i], i, exchange).save()
 
-                    TimeSeries(sec, 'security.price','tick', timestr+df.iloc[-1,0])
+                    TimeSeries(sec, 'security.price','tick', timestr+df.iloc[-1,0]).save()
                     # MongodbJson[i]['tickStart']=timestr+df.iloc[-1,0]
             result=_dataFrame2MetricsList(df,str_volume_json,date=timestr,code=i)
             database.insertList(result)

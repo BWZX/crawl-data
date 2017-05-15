@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+import sys
+sys.path.append('../publicstuff')
 import tushare as ts
 import config 
 import json

@@ -50,23 +50,23 @@ class TimeSeries(MongoModel):
 
 class ShareBonus(MongoModel):
     gupiao = fields.ReferenceField(Securities)
-    gonggaori = fields.CharField()
-    chuquanchuxiri = fields.CharField()
-    dengjiri = fields.CharField()
+    gonggaori = fields.CharField(blank=True)
+    chuquanchuxiri = fields.CharField(blank=True)
+    dengjiri = fields.CharField(blank=True)
     songgu = fields.FloatField()
     zhuanzeng = fields.FloatField()
     paixi = fields.FloatField()
-    jingdu = fields.CharField()
+    jingdu = fields.CharField(blank=True)
 
     class Meta:
         final = True
 
 class ShareRation(MongoModel):
     gupiao = fields.ReferenceField(Securities)
-    gonggaori = fields.CharField()
-    shangshiri = fields.CharField()
-    chuquanri = fields.CharField()
-    dengjiri = fields.CharField()
+    gonggaori = fields.CharField(blank=True)
+    shangshiri = fields.CharField(blank=True)
+    chuquanri = fields.CharField(blank=True)
+    dengjiri = fields.CharField(blank=True)
     peigufangan = fields.FloatField()
     peigujiage = fields.FloatField()    
     jizhunguben = fields.FloatField()
@@ -79,7 +79,7 @@ class ShareRation(MongoModel):
 
 class Finance(MongoModel):
     security = fields.ReferenceField(Securities)
-    time = fields.CharField()       #'2017.1' 季度
+    time = fields.CharField(blank=True)       #'2017.1' 季度
     esp = fields.FloatField()       #每股收益
     eps_yoy = fields.FloatField()       #每股收益同比(%)
     bvps = fields.FloatField()       #每股净资产
@@ -87,8 +87,8 @@ class Finance(MongoModel):
     epcf = fields.FloatField()       #每股现金流量(元)
     net_profits = fields.FloatField()       #净利润(万元)
     profits_yoy = fields.FloatField()       #净利润同比(%)
-    distrib = fields.CharField()       #分配方案
-    report_date = fields.CharField()       #发布日期
+    distrib = fields.CharField(blank=True)       #分配方案
+    report_date = fields.CharField(blank=True)       #发布日期
     #roe = fields.FloatField()       #净资产收益率(%)
     net_profit_ratio = fields.FloatField()       #净利率(%)
     gross_profit_rate = fields.FloatField()       #毛利率(%)
@@ -120,7 +120,7 @@ class Finance(MongoModel):
     cf_liabilities = fields.FloatField()       #经营现金净流量对负债比率
     cashflowratio = fields.FloatField()       #现金流量比率
 
-    date = fields.CharField()        #报告日期
+    date = fields.CharField(blank=True)        #报告日期
     nums = fields.FloatField()        #基金家数
     nlast = fields.FloatField()        #与上期相比（增加或减少了）
     count = fields.FloatField()        #基金持股数（万股）
@@ -128,8 +128,8 @@ class Finance(MongoModel):
     amount = fields.FloatField()        #基金持股市值
     ratio = fields.FloatField()        #占流通盘比率
 
-    type = fields.CharField()       #业绩变动类型【预增、预亏等】
-    report_date = fields.CharField()       #发布日期
+    type = fields.CharField(blank=True)       #业绩变动类型【预增、预亏等】
+    report_date = fields.CharField(blank=True)       #发布日期
     pre_eps = fields.FloatField()       #上年同期每股收益
     range = fields.FloatField()       #业绩变动范围
 

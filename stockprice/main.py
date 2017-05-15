@@ -4,6 +4,8 @@
 """
     this file is used to control the data crawling
 """
+import sys
+sys.path.append('../publicstuff')
 import collectData
 import config
 import time
