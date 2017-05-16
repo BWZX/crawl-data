@@ -6,6 +6,16 @@ import processData as pd
 from mongoModel import *
 import config
 
+
+stolist=config.stolist
+try:
+    with open('progress.ini','r') as f:
+        now_at=f.read()
+        print("now_at ",now_at)
+        stolist=stolist[stolist.index(now_at)+1:]
+except Exception:
+    pass
+
 @asyncio.coroutine
 def fetchData(session=None, callback = pd.processData):
     #set request url and parameters here or you can pass from outside. 
@@ -16,6 +26,7 @@ def fetchData(session=None, callback = pd.processData):
     #i.e. 
     #yield from s.get('***/page1')
     #yield from s.get('***/page2')
+    f=open('debug.log','a')
     ######################################################################## 
     cookies = {
         
@@ -27,13 +38,13 @@ def fetchData(session=None, callback = pd.processData):
     url = 'http://vip.stock.finance.sina.com.cn/corp/go.php/vISSUE_ShareBonus/stockid/'
     r='text'
     index=0
-    length=len(config.stolist)
+    length=len(stolist)
     while index<length:                
         coroutines = []        
         for i in range(10):
             if index>=length:
                 break;
-            coroutines.append(s.get(url+config.stolist[index]+'.phtml'))
+            coroutines.append(s.get(url+stolist[index]+'.phtml'))
             index=index+1
 
         for coroutine in asyncio.as_completed(coroutines):             
@@ -44,7 +55,14 @@ def fetchData(session=None, callback = pd.processData):
                 r = yield from coroutine
             if not r:
                 continue
-            data = yield from r.text(encoding='gb2312')
+            try:
+                data = yield from r.text(encoding='gb2312')
+            except UnicodeDecodeError:
+                try:
+                    data = yield from r.text(encoding='utf-8')
+                except Exception:
+                    f.write(stolist[index],' 附近有一网页无法解析。\n')
+                    continue
             data = yield from callback(s, data)
 
             try:
@@ -67,8 +85,11 @@ def fetchData(session=None, callback = pd.processData):
                 for item in data['rationBonus']:
                     item['gupiao']=sec
                     ShareRation(item['gupiao'], item['gonggaori'], item['shangshiri'], item['chuquanri'], item['dengjiri'], item['peigufangan'], item['peigujiage'], item['jizhunguben'], item['shijipeigushu'], item['shijipeigubili']).save()
-                print('rough complete.')
+        print('rough complete.')
+        with open('progress.ini','w') as pr:
+            pr.write(str(index))
 
+    f.close()
         # yield from asyncio.sleep(1)
 ################################################################
 ################################################################
