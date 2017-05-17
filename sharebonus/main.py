@@ -60,8 +60,8 @@ def fetchData(session=None, callback = pd.processData):
             except UnicodeDecodeError:
                 try:
                     data = yield from r.text(encoding='utf-8')
-                except Exception:
-                    f.write(stolist[index],' 附近有一网页无法解析。\n')
+                except UnicodeDecodeError:
+                    f.write(str(stolist[index]),' nearby has a page cannot be parsed.\n')
                     continue
             data = yield from callback(s, data)
 
@@ -87,7 +87,7 @@ def fetchData(session=None, callback = pd.processData):
                     ShareRation(item['gupiao'], item['gonggaori'], item['shangshiri'], item['chuquanri'], item['dengjiri'], item['peigufangan'], item['peigujiage'], item['jizhunguben'], item['shijipeigushu'], item['shijipeigubili']).save()
         print('rough complete.')
         with open('progress.ini','w') as pr:
-            pr.write(str(index))
+            pr.write(str(stocklist[index]))
 
     f.close()
         # yield from asyncio.sleep(1)

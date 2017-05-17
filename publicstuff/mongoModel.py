@@ -10,7 +10,7 @@ from pymodm import connect, fields, MongoModel, EmbeddedMongoModel
 
 # Connect to MongoDB first. PyMODM supports all URI options supported by
 # PyMongo. Make sure also to specify a database in the connection string:
-connect('mongodb://10.8.0.5:27017/quant')
+connect('mongodb://124.205.43.244:27017/quant')
 
 class Exchange(MongoModel):
     name = fields.CharField()
@@ -42,8 +42,8 @@ class TimeSeries(MongoModel):
     security = fields.ReferenceField(Securities)
     metric = fields.CharField()
     tag = fields.CharField()
-    start_at = fields.IntegerField()
-    end_at = fields.IntegerField()
+    start_at = fields.DateTimeField()
+    end_at = fields.DateTimeField()
 
     class Meta:
         final = True

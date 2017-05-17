@@ -349,7 +349,7 @@ def fetchAllStocksHistoryTickData():
                     except Securities.DoesNotExist:
                         sec=Securities(config.StocksList[i], i, exchange).save()
 
-                    TimeSeries(sec, 'security.price','tick', timestr+df.iloc[-1,0]).save()
+                    TimeSeries(sec, 'security.price','tick', date).save()
                     # MongodbJson[i]['tickStart']=timestr+df.iloc[-1,0]
             result=_dataFrame2MetricsList(df,str_volume_json,date=timestr,code=i)
             database.insertList(result)
