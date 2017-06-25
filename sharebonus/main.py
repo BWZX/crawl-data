@@ -64,6 +64,7 @@ def fetchData(session=None, callback = pd.processData):
                     f.write(str(stolist[index]),' nearby has a page cannot be parsed.\n')
                     continue
             data = yield from callback(s, data)
+            # print(data)
 
             try:
                 # print(data['shareCode'])
