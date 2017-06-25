@@ -9,7 +9,7 @@ import config
 
 stolist=config.stolist
 try:
-    with open('progress.ini','r') as f:
+    with open('thisprogress.ini','r') as f:
         now_at=f.read()
         print("now_at ",now_at)
         stolist=stolist[stolist.index(now_at)+1:]
@@ -87,8 +87,8 @@ def fetchData(session=None, callback = pd.processData):
                     item['gupiao']=sec
                     ShareRation(item['gupiao'], item['gonggaori'], item['shangshiri'], item['chuquanri'], item['dengjiri'], item['peigufangan'], item['peigujiage'], item['jizhunguben'], item['shijipeigushu'], item['shijipeigubili']).save()
         print('rough complete.')
-        with open('progress.ini','w') as pr:
-            pr.write(str(stocklist[index]))
+        with open('thisprogress.ini','w') as pr:
+            pr.write(str(stolist[index]))
 
     f.close()
         # yield from asyncio.sleep(1)
