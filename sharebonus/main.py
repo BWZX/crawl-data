@@ -61,7 +61,7 @@ def fetchData(session=None, callback = pd.processData):
                 try:
                     data = yield from r.text(encoding='utf-8')
                 except UnicodeDecodeError:
-                    f.write(str(stolist[index]),' nearby has a page cannot be parsed.\n')
+                    f.write(str(stolist[index])+' nearby has a page cannot be parsed.\n')
                     continue
             data = yield from callback(s, data)
             # print(data)
