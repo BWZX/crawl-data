@@ -88,7 +88,7 @@ def fetchData(session=None, callback = pd.processData):
                     ShareRation(item['gupiao'], item['gonggaori'], item['shangshiri'], item['chuquanri'], item['dengjiri'], item['peigufangan'], item['peigujiage'], item['jizhunguben'], item['shijipeigushu'], item['shijipeigubili']).save()
         print('rough complete.')
         with open('thisprogress.ini','w') as pr:
-            pr.write(str(stolist[index]))
+            pr.write(str(data['shareCode']))
 
     f.close()
         # yield from asyncio.sleep(1)
