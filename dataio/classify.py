@@ -19,15 +19,25 @@ zz500= ts.get_zz500s()
 
 res = pd.merge(area, industry, on=['code','name'])
 res = pd.merge(res, concept, on=['code','name'])
-print(res)
+# print(res)
 # exit()
 
 for stock in config.stolist:
     current = res[res.code==stock]
+    print(current)
     name = config.StocksList[stock]
-    area_ = current.iloc[0,2]
+    area_ = list(set(list(current.area)))
+    if len(area_)>0:
+        area_=area_[0]
+    else:
+        area_='None'
+
     inds = list(set(list(current.c_name_x)))
     conc = list(set(list(current.c_name_y)))
+    if len(inds)==0:
+        inds=['None']
+    if len(conc)==0:
+        conc=['None']
     Classified(stock,name,inds,conc,area_).save()
 
 for hs in hs300.iterrows():

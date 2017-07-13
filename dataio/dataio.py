@@ -122,7 +122,8 @@ def get_zz500():
 def get_classified(tag=[]):
     clas={}
     if len(tag)>0:
-        for obj in Classified.objects.raw({'$or':[{'industry':{'$in':[2]}, 'concept':{'$in':['dkj']} }]}).all():
+        for obj in Classified.objects.raw({'$or':[{'industry':{'$in':tag}, 'concept':{'$in':tag} }]}).all():
+            # print(999)
             clas[obj.code]=obj.name
         pass
     else:
@@ -132,5 +133,6 @@ def get_classified(tag=[]):
     pass
 
 if __name__ == '__main__':
-    # _rightPrice('dd','000001')
-    get_price(['000001','000002'])
+    # get_price(['000001','000002'])
+    print(get_zz500())
+    print(get_classified(['生物智能','None']))
