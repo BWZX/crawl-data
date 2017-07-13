@@ -10,7 +10,7 @@ from pymodm import connect, fields, MongoModel, EmbeddedMongoModel
 
 # Connect to MongoDB first. PyMODM supports all URI options supported by
 # PyMongo. Make sure also to specify a database in the connection string:
-connect('mongodb://node0:27017/quant')
+connect('mongodb://u:27017/quant')
 
 class Exchange(MongoModel):
     name = fields.CharField()
@@ -136,6 +136,40 @@ class Finance(MongoModel):
     class Meta:
         final = True
 
+
+class Classified(MongoModel):
+    code = fields.CharField()
+    name = fields.CharField()
+    industry = fields.ListField()
+    concept = fields.ListField()
+    area = fields.CharField()
+
+    class Meta:
+        final = True
+
+class Hs300(MongoModel):
+    code = fields.CharField()
+    name = fields.CharField()
+
+    class Meta:
+        final = True
+
+class Sz50(MongoModel):
+    code = fields.CharField()
+    name = fields.CharField()
+
+    class Meta:
+        final = True
+
+class Zz500(MongoModel):
+    code = fields.CharField()
+    name = fields.CharField()
+
+    class Meta:
+        final = True
+
+
+
 arglist=(    
     'time',
     'esp',
@@ -192,17 +226,17 @@ arglist=(
     
 
 if __name__ == '__main__':
-    
+    Classified('001','jj',[1,5,'4'],[2,1,'dk'],'ss').save()
 
 
-    Exchange(name='j股市').save()
+    # Exchange(name='j股市').save()
     # exchange=Exchange.objects.raw({'name':'沪深股市'}).all()[0]._id
     # print(exchange)
     # Securities('test','test',exchange).save()
     # for post in Securities.objects.raw({'code': '000001'}):
     #     print(post.name + ' by ' + post.code)
 
-    for obj in Exchange.objects.all():
-        print(obj.name)
+    for item in Classified.objects.raw({'$or':[{'industry':{'$in':[2]}, 'concept':{'$in':['dkj']} }]}).all():
+        print(item.code)
     # for obj in Securities.objects.all():
     #     print(obj.name)
