@@ -2,6 +2,8 @@
 this file help to fill the database table, such as Classified
 hs300 sz50 zz500
 """
+import sys
+sys.path.append('../publicstuff')
 import tushare as ts 
 import pandas as pd
 import config
@@ -17,13 +19,15 @@ zz500= ts.get_zz500s()
 
 res = pd.merge(area, industry, on=['code','name'])
 res = pd.merge(res, concept, on=['code','name'])
+print(res)
+# exit()
 
 for stock in config.stolist:
     current = res[res.code==stock]
     name = config.StocksList[stock]
     area_ = current.iloc[0,2]
-    inds = list(set(list(current.c_name_y)))
-    conc = list(set(list(current.c_name_z)))
+    inds = list(set(list(current.c_name_x)))
+    conc = list(set(list(current.c_name_y)))
     Classified(stock,name,inds,conc,area_).save()
 
 for hs in hs300.iterrows():
