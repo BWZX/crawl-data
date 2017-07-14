@@ -226,7 +226,7 @@ arglist=(
     
 
 if __name__ == '__main__':
-    Classified('001','jj',[1,5,'4'],[2,1,'dk'],'ss').save()
+    # Classified('001','物理',[1,5,'物理'],[2,1,'物理'],'d').save()
 
 
     # Exchange(name='j股市').save()
@@ -236,7 +236,7 @@ if __name__ == '__main__':
     # for post in Securities.objects.raw({'code': '000001'}):
     #     print(post.name + ' by ' + post.code)
 
-    for item in Classified.objects.raw({'$or':[{'industry':{'$in':[2]}, 'concept':{'$in':['dkj']} }]}).all():
+    for item in Classified.objects.raw({'$or':[{'industry':{'in':['4',6,6]}, 'concept':{'in':['4',6,6]} }]}).all():
         print(item.code)
     # for obj in Securities.objects.all():
     #     print(obj.name)
