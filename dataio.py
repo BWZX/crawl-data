@@ -134,9 +134,9 @@ def get_classified(tag=[]):
     pass
 
 if __name__ == '__main__':
-    # get_price(['000001','000002'])
+    print(get_price(['000001','000002']))
     # print(get_zz500())
-    print(get_classified(['房地产','基金重仓']))  #获取并集
+    # print(get_classified(['房地产','基金重仓']))  #获取并集
 
     # for obj in Classified.objects.all():
     #     print(obj.name)

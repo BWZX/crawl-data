@@ -8,6 +8,19 @@ from mongoModel import *
 from datetime import datetime as dt, timedelta as td
 import pandas as pd 
 import numpy as np
+import tushare as ts
+
+trade_days={}
+__trade_days = ts.trade_cal()
+for i,row in __trade_days.iterrows():
+    t=dt.strptime(row['calendarDate'],'%Y-%m-%d')
+    trade_days[t]=row['isOpen']
+
+# print(trade_days)
+assert type(trade_days[t]) is type(0)
+
+
+
 
 def _getPriceData(code, period, start, end, price):    
     url='http://u:4242/api/query?start={start}&end={end}&m=none:security.price%7Bperiod={period},code={code},price={price}%7D'.format(start=start, end=end, period=period, code=code, price=price)    
@@ -25,7 +38,7 @@ def _getPriceData(code, period, start, end, price):
 
 def _getVolumeData(code, period, start, end):     #1980/01/01-00:00:00  
     url='http://u:4242/api/query?start={start}&end={end}&m=none:security.volume%7Bperiod={period},code={code}%7D'.format(start=start, end=end, period=period, code=code)    
-    request=urllib.request.Request(url)  
+    request=urllib.request.Request(url)
     result=urllib.request.urlopen(request)
     if result.code == 200 or 204:
         jstr=str(result.read(),encoding = 'utf-8')
@@ -71,17 +84,29 @@ def _rightPrice(data, security):
             pass
     pass
 
-def get_price(security, start_date ='1y-ago', frequency ='day'):
+def get_price(security, start_date ='1y-ago', end_date='1s-ago', frequency ='day'):
     if type(security) is not type([]):
         security=[security]
+
+    try:
+        tmp_s_date = dt.strptime(start_date, '%Y-%m-%d')
+        tmp_e_date = dt.strptime(end_date, '%Y-%m-%d')
+        pass
+    except Exception:
+        tmp_s_date=start_date
+        tmp_e_date=end_date
+
+    start_date = int(tmp_s_date.timestamp())
+    end_date = int(tmp_e_date.timestamp())
+
     # oudata={}
     oudf={}
     for code in security:
-        op = _getPriceData(code,frequency, start_date, '1s-ago', 'open')
-        cl = _getPriceData(code,frequency, start_date, '1s-ago', 'close')
-        lo = _getPriceData(code,frequency, start_date, '1s-ago', 'low')
-        hi = _getPriceData(code,frequency, start_date, '1s-ago', 'high')
-        vl = _getVolumeData(code,frequency, start_date, '1s-ago')
+        op = _getPriceData(code,frequency, start_date, end_date, 'open')
+        cl = _getPriceData(code,frequency, start_date, end_date, 'close')
+        lo = _getPriceData(code,frequency, start_date, end_date, 'low')
+        hi = _getPriceData(code,frequency, start_date, end_date, 'high')
+        vl = _getVolumeData(code,frequency, start_date, end_date)
         # print(op)
         candle=[]
         opp=sorted(op.keys(),reverse=True) #from now to ago
@@ -89,6 +114,7 @@ def get_price(security, start_date ='1y-ago', frequency ='day'):
             candle.append([it, op[it], cl[it], lo[it], hi[it], vl[it]])
         # print(candle)
         _rightPrice(candle, code)
+        _fillHalt(candle, start_date, end_date)
         d={
             'time': pd.Series(candle[0]), 'open': pd.Series(candle[1]), 'close': pd.Series(candle[2]),
             'high': pd.Series(candle[3]), 'low': pd.Series(candle[4]), 'volume': pd.Series(candle[5])
@@ -97,6 +123,45 @@ def get_price(security, start_date ='1y-ago', frequency ='day'):
         # oudata[code]=candle.copy()
     print(oudf)
     return oudf
+
+def _fillHalt(candle, starttime, endtime):
+    fmt = lambda x: dt.fromtimestamp(starttime)
+    mkdt = lambda x: dt(x.year, x.month, x.day)     
+    try:
+        endtime   = dt.fromtimestamp(endtime) 
+        starttime = dt.fromtimestamp(starttime)        
+     except Exception:
+         return     
+    endtime   = dt.fromtimestamp(endtime)
+    starttime =mkdt(starttime)
+    endtime = mkdt(endtime)
+    loop=starttime
+    index=0   
+
+    while  loop<=endtime: 
+        if !trade_days.get(loop):
+            loop+=td(1,0,0)
+            continue       
+        if (trade_days.get(loop) and loop == mkdt(fmt(candle[index][0]))):
+            loop+=td(1,0,0) 
+            index+=1
+            continue      
+
+        if trade_days.get(loop) and loop < mkdt(fmt(candle[index][0])):  #today is trade day, and the nearest forward candle isn't contain the day
+            pp=candle[index].copy()
+            pp[0]=int(pp[0]+td(1,0,0).total_seconds())
+            candle=candle[0:index]+[pp]+candle[index:]
+            loop=loop+td(1,0,0)
+
+        if trade_days.get(loop) and loop > mkdt(fmt(candle[index][0])):
+            pp=candle[index].copy()
+            pp[0]=int(pp[0]+td(1,0,0).total_seconds())
+            candle=candle[0:index]+[pp]+candle[index:]
+            loop=loop+td(1,0,0)
+            if index+1<len(candle):
+                index+=1
+            pass
+
 
 def get_hs300():
     hs300={}
@@ -135,4 +200,4 @@ def get_classified(tag=[]):
 if __name__ == '__main__':
     # get_price(['000001','000002'])
     print(get_zz500())
-    print(get_classified(['生物智能','None']))
+    # print(get_classified(['生物智能','None']))
