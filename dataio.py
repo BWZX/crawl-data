@@ -22,7 +22,7 @@ assert type(trade_days[t]) is type(0)
 
 
 def _getPriceData(code, period, start, end, price):    
-    url='http://u:4242/api/query?start={start}&end={end}&m=none:security.price%7Bperiod={period},code={code},price={price}%7D'.format(start=start, end=end, period=period, code=code, price=price)    
+    url='http://node0:4242/api/query?start={start}&end={end}&m=none:security.price%7Bperiod={period},code={code},price={price}%7D'.format(start=start, end=end, period=period, code=code, price=price)    
     print(url)
     request=urllib.request.Request(url)  
     result=urllib.request.urlopen(request, timeout=25)
@@ -36,7 +36,7 @@ def _getPriceData(code, period, start, end, price):
     pass
 
 def _getVolumeData(code, period, start, end):     #1980/01/01-00:00:00  
-    url='http://u:4242/api/query?start={start}&end={end}&m=none:security.volume%7Bperiod={period},code={code}%7D'.format(start=start, end=end, period=period, code=code)    
+    url='http://node0:4242/api/query?start={start}&end={end}&m=none:security.volume%7Bperiod={period},code={code}%7D'.format(start=start, end=end, period=period, code=code)    
     request=urllib.request.Request(url)
     result=urllib.request.urlopen(request)
     if result.code == 200 or 204:
