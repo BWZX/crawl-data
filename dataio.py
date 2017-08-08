@@ -7,9 +7,22 @@ from dataio.publicstuff.mongoModel import *
 from datetime import datetime as dt, timedelta as td
 import pandas as pd 
 import numpy as np
+import tushare as ts
+
+trade_days={}
+__trade_days = ts.trade_cal()
+for i,row in __trade_days.iterrows():
+    t=dt.strptime(row['calendarDate'],'%Y-%m-%d')
+    trade_days[t]=row['isOpen']
+
+# print(trade_days)
+assert type(trade_days[t]) is type(0)
+
+
+
 
 def _getPriceData(code, period, start, end, price):    
-    url='http://node0:4242/api/query?start={start}&end={end}&m=none:security.price%7Bperiod={period},code={code},price={price}%7D'.format(start=start, end=end, period=period, code=code, price=price)    
+    url='http://u:4242/api/query?start={start}&end={end}&m=none:security.price%7Bperiod={period},code={code},price={price}%7D'.format(start=start, end=end, period=period, code=code, price=price)    
     print(url)
     request=urllib.request.Request(url)  
     result=urllib.request.urlopen(request, timeout=25)
@@ -24,7 +37,7 @@ def _getPriceData(code, period, start, end, price):
 
 def _getVolumeData(code, period, start, end):     #1980/01/01-00:00:00  
     url='http://u:4242/api/query?start={start}&end={end}&m=none:security.volume%7Bperiod={period},code={code}%7D'.format(start=start, end=end, period=period, code=code)    
-    request=urllib.request.Request(url)  
+    request=urllib.request.Request(url)
     result=urllib.request.urlopen(request)
     if result.code == 200 or 204:
         jstr=str(result.read(),encoding = 'utf-8')
@@ -70,32 +83,87 @@ def _rightPrice(data, security):
             pass
     pass
 
-def get_price(security, start_date ='1y-ago', frequency ='day'):
+def get_price(security, start_date ='1y-ago', end_date='1s-ago', frequency ='day'):
     if type(security) is not type([]):
         security=[security]
+
+    try:
+        tmp_s_date = dt.strptime(start_date, '%Y-%m-%d')
+        tmp_e_date = dt.strptime(end_date, '%Y-%m-%d')
+        startdate = int(tmp_s_date.timestamp())
+        enddate = int(tmp_e_date.timestamp())
+        pass
+    except Exception:
+        tmp_s_date=start_date
+        tmp_e_date=end_date
+        startdate = start_date
+        enddate = end_date
+
+    
+
     # oudata={}
     oudf={}
     for code in security:
-        op = _getPriceData(code,frequency, start_date, '1s-ago', 'open')
-        cl = _getPriceData(code,frequency, start_date, '1s-ago', 'close')
-        lo = _getPriceData(code,frequency, start_date, '1s-ago', 'low')
-        hi = _getPriceData(code,frequency, start_date, '1s-ago', 'high')
-        vl = _getVolumeData(code,frequency, start_date, '1s-ago')
+        op = _getPriceData(code,frequency, startdate, enddate, 'open')
+        cl = _getPriceData(code,frequency, startdate, enddate, 'close')
+        lo = _getPriceData(code,frequency, startdate, enddate, 'low')
+        hi = _getPriceData(code,frequency, startdate, enddate, 'high')
+        vl = _getVolumeData(code,frequency, startdate, enddate)
         # print(op)
         candle=[]
         opp=sorted(op.keys(),reverse=True) #from now to ago
         for it in opp:
             candle.append([it, op[it], cl[it], lo[it], hi[it], vl[it]])
-        # print(candle)
+        print(len(candle))
         _rightPrice(candle, code)
-        d={
-            'time': pd.Series(candle[0]), 'open': pd.Series(candle[1]), 'close': pd.Series(candle[2]),
-            'high': pd.Series(candle[3]), 'low': pd.Series(candle[4]), 'volume': pd.Series(candle[5])
-        }
-        oudf[code]=pd.DataFrame(d)
+        _fillHalt(candle, startdate, enddate)
+        print(len(candle))                
+        oudf[code]=pd.DataFrame(candle,columns=['time','open','close','low','high','volume'])
         # oudata[code]=candle.copy()
-    print(oudf)
+    # print(oudf)
     return oudf
+
+def _fillHalt(candle, starttime, endtime):
+    fmt = lambda x: dt.fromtimestamp(float(starttime))
+    mkdt = lambda x: dt(x.year, x.month, x.day)     
+    try:
+        endtime   = fmt(endtime) 
+        starttime = fmt(starttime)        
+    except Exception:
+        return     
+    starttime =mkdt(starttime)
+    endtime = mkdt(endtime)
+    loop=starttime
+    index=0   
+
+    while  loop<=endtime: 
+        if not trade_days.get(loop):
+            loop+=td(1,0,0)
+            continue       
+        if (trade_days.get(loop) and loop == mkdt(fmt(candle[index][0]))):
+            loop+=td(1,0,0) 
+            index+=1
+            continue      
+
+        if trade_days.get(loop) and loop < mkdt(fmt(candle[index][0])):  #today is trade day, and the nearest forward candle isn't contain the day
+            pp=candle[index].copy()
+            pp[0]=int(pp[0]+td(1,0,0).total_seconds())
+            pp[5]=0
+            candle=candle[0:index]+[pp]+candle[index:]
+            loop=loop+td(1,0,0)
+
+        if trade_days.get(loop) and loop > mkdt(fmt(candle[index][0])):
+            pp=candle[index].copy()
+            pp[0]=int(pp[0]+td(1,0,0).total_seconds())
+            pp[5]=0
+            candle=candle[0:index]+[pp]+candle[index:]
+            loop=loop+td(1,0,0)
+            if index+1<len(candle):
+                index+=1
+            pass
+
+    # print(candle)
+
 
 def get_hs300():
     hs300={}
@@ -121,12 +189,10 @@ def get_zz500():
 def get_classified(tag=[]):
     clas={}
     if len(tag)>0:
-        for obj in Classified.objects.raw({'industry':{'$in':tag}}).all():
+        for obj in Classified.objects.raw({'$or':[{'industry':{'$in':tag}, 'concept':{'$in':tag} }]}).all():
             # print(999)
             clas[obj.code]=obj.name
         pass
-        for obj in Classified.objects.raw({'concept':{'$in':tag}}).all():
-            clas[obj.code]=obj.name
     else:
         clas=config.StocksList
 
@@ -134,9 +200,6 @@ def get_classified(tag=[]):
     pass
 
 if __name__ == '__main__':
-    print(get_price(['000001','000002']))
+    get_price('000002','2011-10-09','2012-01-01')
     # print(get_zz500())
-    # print(get_classified(['房地产','基金重仓']))  #获取并集
-
-    # for obj in Classified.objects.all():
-    #     print(obj.name)
+    # print(get_classified(['生物智能','None']))
