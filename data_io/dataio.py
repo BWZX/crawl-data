@@ -18,10 +18,6 @@ for i,row in __trade_days.iterrows():
 
 # print(trade_days)
 assert type(trade_days[t]) is type(0)
-
-
-
-
 def _getPriceData(code, period, start, end, price):    
     url='http://node0:4242/api/query?start={start}&end={end}&m=none:security.price%7Bperiod={period},code={code},price={price}%7D'.format(start=start, end=end, period=period, code=code, price=price)    
     print(url)
