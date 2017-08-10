@@ -106,7 +106,7 @@ if __name__ == '__main__':
     if len(list(security.objects.raw({'code':'000001'})))<100:
         fetchAllStocksHistoryData(config.stolist)
     elif config.refill_list:
-        fetchAllStocksHistoryData(refill_list)
+        fetchAllStocksHistoryData(config.refill_list)
     
     CrawlContinue()
 
