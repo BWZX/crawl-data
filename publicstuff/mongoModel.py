@@ -236,7 +236,7 @@ if __name__ == '__main__':
     # for post in Securities.objects.raw({'code': '000001'}):
     #     print(post.name + ' by ' + post.code)
 
-    for item in Classified.objects.raw({'$or':[{'industry':{'in':['4',6,6]}, 'concept':{'in':['4',6,6]} }]}).all():
+    for item in Classified.objects.all():
         print(item.code)
-    # for obj in Securities.objects.all():
-    #     print(obj.name)
+    for obj in Securities.objects.all():
+        print(obj.name)

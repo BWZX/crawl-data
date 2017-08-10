@@ -9,7 +9,7 @@ try:
 except Exception:
     __flist={}
     pass
-
+# print(__flist)
 __netlist=ts.get_today_all()
 __nlist={}
 for i in range(len(__netlist)):
@@ -17,9 +17,11 @@ for i in range(len(__netlist)):
     __nlist[tem['code']] = tem['name']
 
 refill_list=[it for it in __nlist.keys() if it not in __flist.keys()]
-
+print('lalalal')
 StocksList=__nlist
-stolist=list(StocksList.keys()).sort()
+stolist=list(StocksList.keys())
+stolist.sort()
+# print(stolist)
 try:
     with open('stocklist.json','w') as f:
         f.write(json.dumps(StocksList))
@@ -44,8 +46,8 @@ HEADERS = {
 }
 
 if __name__ == '__main__':
-    stolist=list(StocksList.keys())
-    stolist.sort()
-    with open('stolist.py','w') as f:
-        f.write(str(stolist))
+    # stolist=list(StocksList.keys())
+    # stolist.sort()
+    # with open('stolist.py','w') as f:
+    #     f.write(str(stolist))
     print(stolist)

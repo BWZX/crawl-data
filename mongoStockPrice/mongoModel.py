@@ -3,6 +3,7 @@
 from pymongo import TEXT
 from pymongo.operations import IndexModel
 from pymodm import connect, fields, MongoModel, EmbeddedMongoModel
+from datetime import datetime as dt, timedelta as td
 
 
 # from securities.models import Security
@@ -21,9 +22,11 @@ class security(MongoModel):
     volume = fields.FloatField()
     code = fields.CharField()
     name = fields.CharField()    
-    period = fields.CharField()
-
 
 if __name__ == '__main__':
+    # security(dt(2015,4,5),1.11,1.22,1.33,1.21,214.3,'001','sss').save()
+    # ll=list(security.objects.raw({'date':dt(2015,4,5), 'code':'001'}))
+    # print(ll)
+    security.objects.raw({'code':'099'}).update({'$set':{'name': '0o9','open':832}})
     for item in security.objects.all():
-            print(item.code)
+        print(item.code, item.name, item.open)
