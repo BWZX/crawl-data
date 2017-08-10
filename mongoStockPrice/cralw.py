@@ -103,7 +103,7 @@ def get_k_data(codes, start_date, end_date, rt_type='df'):
     pass
 
 if __name__ == '__main__':
-    if len(list(security.objects.raw({'code':'000001'})))<100:
+    if len(list(security.objects.raw({'code':'601933'})))<100:
         fetchAllStocksHistoryData(config.stolist)
     elif config.refill_list:
         fetchAllStocksHistoryData(config.refill_list)
