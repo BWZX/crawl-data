@@ -229,7 +229,7 @@ if __name__ == '__main__':
     # Classified('001','物理',[1,5,'物理'],[2,1,'物理'],'d').save()
 
 
-    # Exchange(name='j股市').save()
+    Exchange(name='j股市').save()
     # exchange=Exchange.objects.raw({'name':'沪深股市'}).all()[0]._id
     # print(exchange)
     # Securities('test','test',exchange).save()
