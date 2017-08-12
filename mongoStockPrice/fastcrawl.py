@@ -2,7 +2,7 @@ import json
 import sys
 sys.path.append('../publicstuff')
 import tushare as ts
-import config
+# import config
 import pymongo
 from pymongo import MongoClient
 client = MongoClient('mongodb://node0:27017')
@@ -23,3 +23,5 @@ def fetchAll(slist):
 
 if __name__ == '__main__':
     fetchAll(config.stolist)
+    # for item in security.objects.all():
+        # print(item.date,'skjg')
