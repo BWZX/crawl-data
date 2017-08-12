@@ -20,7 +20,7 @@ def get_day(code, start_date, end_date):
     t=__T[(__T.isOpen==1)&(__T.calendarDate>=start_date)&(__T.calendarDate<=end_date)]   
     t.columns=['date','isOpen']
     r=pd.merge(df,t,on='date',how='right')
-    r=r.sort(columns='date')
+    r=r.sort_index(by='date')
     k=r.isnull()
     k=list(k[k.open==True].index)
     k.sort()
