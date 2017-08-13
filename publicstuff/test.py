@@ -1,3 +1,5 @@
+# -*- coding: utf8 -*-
+
 from mongoModel import *
 
 # sec=Securities.objects.get({'code':'000001'})

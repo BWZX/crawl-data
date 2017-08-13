@@ -10,12 +10,12 @@ except Exception:
     __flist={}
     pass
 # print(__flist)
-__netlist=ts.get_today_all()
 __nlist={}
-for i in range(len(__netlist)):
-    tem=__netlist.iloc[i]
-    __nlist[tem['code']] = tem['name']
-
+#  __netlist=ts.get_today_all()
+# for i in range(len(__netlist)):
+#     tem=__netlist.iloc[i]
+#    __nlist[tem['code']] = tem['name']
+__nlist=__flist
 refill_list=[it for it in __nlist.keys() if it not in __flist.keys()]
 print('lalalal')
 StocksList=__nlist
