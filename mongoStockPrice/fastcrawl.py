@@ -40,7 +40,7 @@ def fetchContinue(slist):
 
     recrawlist=[]
     for sto in slist:
-        tsdt=ts.get_k_data(sto, lastdaystr, todaystr)
+        tsdt=ts.get_k_data(sto)
         mongodt=opdata.get_day(sto,mongodaystr, lastdaystr)
         if security.count({'code':sto,'date': todaystr}) >=1:
             print('here has inserted.')
@@ -74,4 +74,4 @@ def fetchContinue(slist):
 
 if __name__ == '__main__':
     # fetchAll(['000002','000004','000007','000011', '000014'])
-    fetchContinue(config.stolist[23:])
+    fetchContinue(config.stolist)
