@@ -31,7 +31,6 @@ def fetchContinue(slist):
     today=dt.today()
     today=dt(today.year, today.month, today.day)
 
-    today=today-td(2,0,0)   #####
     lastday=today-td(1,0,0)  #####
     mongoday=today-td(20,0,0)
     print(today)
@@ -42,7 +41,7 @@ def fetchContinue(slist):
     recrawlist=[]
     for sto in slist:
         tsdt=ts.get_k_data(sto, lastdaystr, todaystr)
-        mongodt=opdata.get_day(sto,mongodaystr, todaystr)
+        mongodt=opdata.get_day(sto,mongodaystr, lastdaystr)
         if security.count({'code':sto,'date': todaystr}) >=1:
             print('here has inserted.')
             continue
