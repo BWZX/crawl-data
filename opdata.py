@@ -17,12 +17,13 @@ def get_day(code, start_date='2001-01-01', end_date='2017-10-10'):
     if df.empty:
         return df    
     del df['_id']
-    t=__T[(__T.isOpen==1)&(__T.calendarDate>=start_date)&(__T.calendarDate<=end_date)]   
+    firstdate=df.loc[0].date
+    t=__T[(__T.isOpen==1)&(__T.calendarDate>=firstdate)&(__T.calendarDate<=end_date)]   
     t.columns=['date','isOpen']
     r=pd.merge(df,t,on='date',how='right')
     r=r.sort_values('date').reset_index()
     del r['index']
-    del r['isOpen']xz
+    del r['isOpen']
     # print(r)
     k=r.isnull()
     k=list(k[k.open==True].index)
