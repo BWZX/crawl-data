@@ -31,6 +31,7 @@ def fetchContinue(slist):
     today=dt.today()
     today=dt(today.year, today.month, today.day)
 
+    today=today-td(2,0,0)   #####
     lastday=today-td(1,0,0)  #####
     mongoday=today-td(20,0,0)
     print(today)
@@ -40,8 +41,8 @@ def fetchContinue(slist):
 
     recrawlist=[]
     for sto in slist:
-        tsdt=ts.get_k_data(sto)
-        mongodt=opdata.get_day(sto,mongodaystr, lastdaystr)
+        tsdt=ts.get_k_data(sto, lastdaystr, todaystr)
+        mongodt=opdata.get_day(sto,mongodaystr, todaystr)
         if security.count({'code':sto,'date': todaystr}) >=1:
             print('here has inserted.')
             continue
@@ -72,6 +73,24 @@ def fetchContinue(slist):
     if recrawlist:
         fetchAll(recrawlist)        
 
+
+def fastContinue():
+    today=dt.today()
+    today=dt(today.year, today.month, today.day)
+    todaystr=dt.strftime(today,'%Y-%m-%d')
+
+    ff=ts.get_today_all()
+    ff.rename(colunms={'trade':'close'}, inplace=True)
+    colist=['code','name','open','high','low','close','volume']
+    for co in ff.columns:
+        if co not in colist:
+            del ff[co]
+    ff['date']=todaystr
+    records = json.loads(ff.T.to_json()).values()
+    security.insert(records)
+    pass
+
+
 if __name__ == '__main__':
     # fetchAll(['000002','000004','000007','000011', '000014'])
-    fetchContinue(config.stolist)
+    fetchContinue(config.stolist[23:])
