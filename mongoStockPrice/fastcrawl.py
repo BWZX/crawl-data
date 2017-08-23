@@ -21,7 +21,7 @@ def fetchAll(slist):
         records = json.loads(df_D.T.to_json()).values()
         security.insert(records)
 
-def fetchContinue(slist):
+def fetchContinue(slist, fillDays=20):
     """
         续爬slist列表里的股票，
         同时把数据存到数据库。
@@ -31,44 +31,40 @@ def fetchContinue(slist):
     today=dt.today()
     today=dt(today.year, today.month, today.day)
 
-    today=today-td(2,0,0)   #####
     lastday=today-td(1,0,0)  #####
-    mongoday=today-td(20,0,0)
-    print(today)
-    todaystr=dt.strftime(today,'%Y-%m-%d')
-    lastdaystr=dt.strftime(lastday,'%Y-%m-%d')
-    mongodaystr=dt.strftime(mongoday,'%Y-%m-%d')
+    mongoday=today-td(fillDays,0,0)
+    fmt = lambda x: dt.strftime(x,'%Y-%m-%d')
+    todaystr=fmt(today)
+    lastdaystr=fmt(lastday)
+    mongodaystr=fmt(mongoday)
 
     recrawlist=[]
     for sto in slist:
-        tsdt=ts.get_k_data(sto, lastdaystr, todaystr)
-        mongodt=opdata.get_day(sto,mongodaystr, todaystr)
-        if security.count({'code':sto,'date': todaystr}) >=1:
-            print('here has inserted.')
-            continue
+        tsdt=ts.get_k_data(sto)
         if tsdt.empty:
             continue
-        try:
-            if ((tsdt[tsdt.date==todaystr].open - mongodt.iloc[-1].close)/mongodt.iloc[-1].close > 0.14).bool():
-                recrawlist.append(sto)
-                print(sto)
-                print(mongodt.iloc[-1])
-                security.delete_many({'code': sto})
-                print('data delete')                
-            else:
-                if not tsdt[tsdt.date==todaystr].empty:
-                    records = tsdt[tsdt.date==todaystr].to_dict('record')[0]
-                    records['name']=config.StocksList[sto]
-                    security.insert_one(records)
-                    print('inset one of the code ',sto)
-            pass
-        except Exception:
-            if not tsdt[tsdt.date==todaystr].empty:
-                records = tsdt[tsdt.date==todaystr].to_dict('record')[0]
+        mongodt=opdata.get_day(sto,mongodaystr, todaystr)
+        date=mongodt.iloc[0].date
+        
+        if (tsdt[tsdt.date==date].open - mongodt.iloc[0].open) > 0.00001:
+            recrawlist.append(sto)
+            print(sto)
+            print(mongodt.iloc[-1])
+            security.delete_many({'code': sto})
+            print('data delete') 
+            continue               
+
+        for i in range(len(mongodt)):
+            date=mongodt.iloc[i].date
+            if security.count({'code':sto,'date': date}) >=1:
+                print('here has inserted.')
+                continue
+            if not tsdt[tsdt.date==date].empty:
+                records = tsdt[tsdt.date==date].to_dict('record')[0]
                 records['name']=config.StocksList[sto]
                 security.insert_one(records)
-                print('Exception here but still inset one of the code ',sto)
-            pass
+                print('inset one of the code ',sto)   
+        
     print('will recrawl', recrawlist)
     if recrawlist:
         fetchAll(recrawlist)        
