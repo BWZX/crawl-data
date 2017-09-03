@@ -46,7 +46,7 @@ def fetchContinue(slist, fillDays=20):
         mongodt=opdata.get_day(sto,mongodaystr, todaystr)
         date=mongodt.iloc[0].date
         
-        if (tsdt[tsdt.date==date].open - mongodt.iloc[0].open) > 0.00001:
+        if (tsdt[tsdt.date==date].open - mongodt.iloc[0].open) > 0.0001:
             recrawlist.append(sto)
             print(sto)
             print(mongodt.iloc[-1])
@@ -89,4 +89,8 @@ def fastContinue():
 
 if __name__ == '__main__':
     # fetchAll(['000002','000004','000007','000011', '000014'])
-    fetchContinue(config.stolist[23:])
+    import sys
+    if len(sys.argv) >=2:
+        fetchContinue(config.stolist, sys.argv[1])
+    else:
+        fetchContinue(config.stolist)
