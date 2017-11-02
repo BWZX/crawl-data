@@ -10,7 +10,7 @@ from pymodm import connect, fields, MongoModel, EmbeddedMongoModel
 
 
 # Connect to MongoDB first. PyMODM supports all URI options supported by
-# PyMongo. Make sure also to speadmin:%2Bbeijing2017@cify a database in the connection string:
+# PyMongo. Make sure also to specify a database in the connection string:
 connect('mongodb://node0:27017/quant')
 
 class Exchange(MongoModel):
