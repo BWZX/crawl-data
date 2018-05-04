@@ -4,7 +4,6 @@ from pyquery import PyQuery as pq
 from pandas import DataFrame as dtf
 __client = MongoClient('mongodb://admin:%2B@node0:27017')
 future = __client.quantDay.future
-
 """
 type: http://vip.stock.finance.sina.com.cn/corp/go.php/vCI_CorpOtherInfo/stockid/002458/menu_num/2.phtml
 finance: http://money.finance.sina.com.cn/corp/go.php/vFD_FinanceSummary/stockid/002458.phtml
@@ -63,7 +62,7 @@ def fetchHoldFund(stoid):
 
             data_table[date].append(cell.copy())
         print(data_table)
-            
+
 if __name__ == '__main__':
     # fetchType(0)  
     fetchHoldFund('002458')
