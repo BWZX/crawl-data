@@ -33,8 +33,73 @@ def fetchType(code):
     else:
         print('request faild.') 
 
-def fetch3Table(code, tb, year):
+def fetchCashFlow(code, year):
+    url = 'http://money.finance.sina.com.cn/corp/go.php/vFD_CashFlow/stockid/' + code +'/ctrl/'+ str(year) +'/displaytype/4.phtml'
+    request=urllib.request.Request(url)  
+    result=urllib.request.urlopen(request, timeout=25)
+    if result.code == 200 or 204:
+        ts = result.read()
+        ts=ts.decode('gbk')
+        # print(ts)
+        d = pq(ts)
+        table = d('table#ProfitStatementNewTable0 tbody')
+        data_table = {}
+        data_table['date'] = []
+        for it in table('tr').eq(0)('td').items():  #date
+            data_table['date'].append(it.text())
+       
+        data_table['opincome'] = []
+        for it in table('tr').eq(6)('td').items():  #op cash income
+            data_table['opincome'].append(it.text())
+
+        data_table['netopc'] = []
+        for it in table('tr').eq(12)('td').items():  #net op cash
+            data_table['netopc'].append(it.text())
+
+        data_table['netic'] = []
+        for it in table('tr').eq(25)('td').items():  #net invest cash
+            data_table['netic'].append(it.text())
+
+        data_table['ip'] = []
+        for it in table('tr').eq(34)('td').items():  #interest payment
+            data_table['ip'].append(it.text())
+
+        data_table['netrc'] = []
+        for it in table('tr').eq(38)('td').items():  #net raise cash
+            data_table['netrc'].append(it.text())
+
+        data_table['fad'] = []
+        for it in table('tr').eq(48)('td').items():  #fixed assets deprecition
+            data_table['fad'].append(it.text())
+
+        data_table['aoia'] = []
+        for it in table('tr').eq(49)('td').items():  #amortization of intangible assets
+            data_table['aoia'].append(it.text())
+
+        data_table['ltue'] = []
+        for it in table('tr').eq(50)('td').items():  #long-term unamortized expenses
+            data_table['ltue'].append(it.text())
+
+        print(data_table)        
     pass
+
+def fetchProfit(code, year):
+    url = 'http://money.finance.sina.com.cn/corp/go.php/vFD_ProfitStatement/stockid/'+ code +'/ctrl/'+ str(year) +'/displaytype/4.phtml'
+    request=urllib.request.Request(url)  
+    result=urllib.request.urlopen(request, timeout=25)
+    if result.code == 200 or 204:
+        ts = result.read()
+        ts = ts.decode('gbk')
+        # print(ts)
+        d = pq(ts)
+        table = d('table#ProfitStatementNewTable0 tbody')
+        cell = []
+        for it in table('tr').eq(19)('td').items():
+            cell.append(it.text())
+        
+        print(cell)
+
+
 
 def fetchHoldFund(stoid):
     url = 'http://vip.stock.finance.sina.com.cn/corp/go.php/vCI_FundStockHolder/stockid/' + stoid + '.phtml'
@@ -65,5 +130,7 @@ def fetchHoldFund(stoid):
 
 if __name__ == '__main__':
     # fetchType(0)  
-    fetchHoldFund('002458')
+    # fetchHoldFund('002458')
+    # fetchCashFlow('002458', 2017)
+    fetchProfit('002458', 2017)
 
