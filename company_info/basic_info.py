@@ -11,7 +11,6 @@ predict: http://money.finance.sina.com.cn/corp/go.php/vFD_AchievementNotice/stoc
 fund: http://vip.stock.finance.sina.com.cn/corp/go.php/vCI_FundStockHolder/stockid/002458.phtml
 """       
 
-
 def fetchType(code):
     url = 'http://vip.stock.finance.sina.com.cn/corp/go.php/vCI_CorpOtherInfo/stockid/002458/menu_num/2.phtml'
     request=urllib.request.Request(url)  
@@ -43,44 +42,45 @@ def fetchCashFlow(code, year):
         # print(ts)
         d = pq(ts)
         table = d('table#ProfitStatementNewTable0 tbody')
-        data_table = {}
-        data_table['date'] = []
+        data_table = []
+        data_table.append([])
         for it in table('tr').eq(0)('td').items():  #date
-            data_table['date'].append(it.text())
+            data_table[-1].append(it.text())
        
-        data_table['opincome'] = []
+        data_table.append([])
         for it in table('tr').eq(6)('td').items():  #op cash income
-            data_table['opincome'].append(it.text())
+            data_table[-1].append(it.text())
 
-        data_table['netopc'] = []
+        data_table.append([])
         for it in table('tr').eq(12)('td').items():  #net op cash
-            data_table['netopc'].append(it.text())
+            data_table[-1].append(it.text())
 
-        data_table['netic'] = []
+        data_table.append([])
         for it in table('tr').eq(25)('td').items():  #net invest cash
-            data_table['netic'].append(it.text())
+            data_table[-1].append(it.text())
 
-        data_table['ip'] = []
+        data_table.append([])
         for it in table('tr').eq(34)('td').items():  #interest payment
-            data_table['ip'].append(it.text())
+            data_table[-1].append(it.text())
 
-        data_table['netrc'] = []
+        data_table.append([])
         for it in table('tr').eq(38)('td').items():  #net raise cash
-            data_table['netrc'].append(it.text())
+            data_table[-1].append(it.text())
 
-        data_table['fad'] = []
+        data_table.append([])
         for it in table('tr').eq(48)('td').items():  #fixed assets deprecition
-            data_table['fad'].append(it.text())
+            data_table[-1].append(it.text())
 
-        data_table['aoia'] = []
+        data_table.append([])
         for it in table('tr').eq(49)('td').items():  #amortization of intangible assets
-            data_table['aoia'].append(it.text())
+            data_table[-1].append(it.text())
 
-        data_table['ltue'] = []
+        data_table.append([])
         for it in table('tr').eq(50)('td').items():  #long-term unamortized expenses
-            data_table['ltue'].append(it.text())
+            data_table[-1].append(it.text())
 
-        print(data_table)        
+        # print(data_table)  
+        return data_table      
     pass
 
 def fetchProfit(code, year):
@@ -97,9 +97,8 @@ def fetchProfit(code, year):
         for it in table('tr').eq(19)('td').items():
             cell.append(it.text())
         
-        print(cell)
-
-
+        # print(cell)
+        return cell
 
 def fetchHoldFund(stoid):
     url = 'http://vip.stock.finance.sina.com.cn/corp/go.php/vCI_FundStockHolder/stockid/' + stoid + '.phtml'
@@ -141,15 +140,15 @@ def fetchSummary(stoid):
         table = d('table#FundHoldSharesTable')
         setdate = True
         for tr in table('tr').items():
-            print(tr('td').text()+' then:\n')
+            # print(tr('td').text()+' then:\n')
             if not tr('td').eq(1).text():
-                print('none')
+                # print('none')
                 continue
             if setdate:
                 date = tr('td').eq(1).text()
                 data_table[date] = []
                 setdate = False
-                print(date)
+                # print(date)
                 continue            
             cell = []
             title = tr('td').eq(0).text()
@@ -158,11 +157,12 @@ def fetchSummary(stoid):
             txt = txt[:-1]
             txt = txt.replace(',','')
             cell.append(txt) 
-            print(cell)
+            # print(cell)
             data_table[date].append(cell.copy())
             if title == '净利润':
                 setdate = True
-        print(data_table)
+        # print(data_table)
+        return data_table
 
 def fetchStockStructure(stoid):
     url = 'http://vip.stock.finance.sina.com.cn/corp/go.php/vCI_StockStructure/stockid/' + stoid + '.phtml'
@@ -215,7 +215,49 @@ def fetchStockStructure(stoid):
 if __name__ == '__main__':
     # fetchType(0)  
     # fetchHoldFund('002458')
-    # fetchCashFlow('002458', 2017)
-    # fetchProfit('002458', 2017)
-    fetchStockStructure('002458')
+
+    # for code in codelist:
+    finance_sumery = fetchSummary('002458')    
+    # print('\n\n')
+    start_year = min(finance_sumery)
+    end_year = max(finance_sumery)
+    finance_detail = {}
+    # for year in range(start_year,end_year+1):
+    data = fetchCashFlow('002458', 2017)
+    data.append(fetchProfit('002458', 2017))
+    datadate = data[0]
+    tidydata = {}
+    for ss in range(1,5):
+        tidydata[datadate[ss]] = []
+        for dt in data[1:]:
+            cell = []
+            cell.append(dt[0])
+            cell.append(dt[ss])
+            tidydata[datadate[ss]].append(cell.copy())
+    
+    finance_detail.update(tidydata)
+    # print(tidydata)
+    finance = []
+    for it in finance_detail:
+        temp = finance_detail[it] + finance_sumery[it]
+        temp = [['date', it]] + temp
+        finance.append(temp)
+
+    print(finance)
+    rows = []
+    for it in finance:
+        row = []   # each row will be a dataframe's row.
+        for tt in it:
+            row.append(tt[1])
+        rows.append(row.copy())
+
+    print('\n\n')
+    print(rows)
+
+    
+
+
+    
+    
+    # fetchStockStructure('002458')
 
