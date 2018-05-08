@@ -2,8 +2,12 @@ import urllib, urllib.request
 from pymongo import MongoClient
 from pyquery import PyQuery as pq
 from pandas import DataFrame as dtf
-__client = MongoClient('mongodb://admin:%2B@node0:27017')
-future = __client.quantDay.future
+import json
+from mongoconnect import *
+import sys
+sys.path.append('./publicstuff')
+import config
+
 """
 type: http://vip.stock.finance.sina.com.cn/corp/go.php/vCI_CorpOtherInfo/stockid/002458/menu_num/2.phtml
 finance: http://money.finance.sina.com.cn/corp/go.php/vFD_FinanceSummary/stockid/002458.phtml
@@ -139,11 +143,11 @@ def fetchSummary(stoid):
         data_table = {}
         table = d('table#FundHoldSharesTable')
         setdate = True
-        for tr in table('tr').items():
-            # print(tr('td').text()+' then:\n')
-            if not tr('td').eq(1).text():
+        for tr in table('tr').items():            
+            if not tr('td') or not tr('td').text():
                 # print('none')
                 continue
+            # print(tr.text()+' then:\n')
             if setdate:
                 date = tr('td').eq(1).text()
                 data_table[date] = []
@@ -152,6 +156,8 @@ def fetchSummary(stoid):
                 continue            
             cell = []
             title = tr('td').eq(0).text()
+            if title == '固定资产合计':
+                continue
             cell.append(title)
             txt = tr('td').eq(1).text()
             txt = txt[:-1]
@@ -216,47 +222,61 @@ if __name__ == '__main__':
     # fetchType(0)  
     # fetchHoldFund('002458')
 
-    # for code in codelist:
-    finance_sumery = fetchSummary('002458')    
-    # print('\n\n')
-    start_year = min(finance_sumery)
-    end_year = max(finance_sumery)
-    finance_detail = {}
-    # for year in range(start_year,end_year+1):
-    data = fetchCashFlow('002458', 2017)
-    data.append(fetchProfit('002458', 2017))
-    datadate = data[0]
-    tidydata = {}
-    for ss in range(1,5):
-        tidydata[datadate[ss]] = []
-        for dt in data[1:]:
-            cell = []
-            cell.append(dt[0])
-            cell.append(dt[ss])
-            tidydata[datadate[ss]].append(cell.copy())
+    # print(fetchSummary('002458'))
+    # exit()
+
+    for code in config.stolist:
+        print(code)
+        finance_sumery = fetchSummary(code)    
+        # print('\n\n')
+        start_year = min(finance_sumery).split('-')[0]
+        end_year = max(finance_sumery).split('-')[0]
+        finance_detail = {}
+        for year in range(int(start_year),int(end_year)+1):
+            data = fetchCashFlow(code, year)
+            data.append(fetchProfit(code, year))
+            datadate = data[0]
+            tidydata = {}
+            for ss,v in enumerate(datadate[1:]):
+                tidydata[v] = []
+                for dt in data[1:]:
+                    cell = []
+                    cell.append(dt[0])
+                    cell.append(dt[ss+1])
+                    tidydata[v].append(cell.copy())        
+            finance_detail.update(tidydata)
+
+        # print(tidydata)
+        finance = []
+        for it in finance_detail:
+            temp = finance_detail[it] + finance_sumery[it]
+            temp = [['date', it]] + temp
+            finance.append(temp)
+
+        # print(finance)
+
+        columns =['date', 'op_income', 'net_op_cf', 'net_invest_cf', 'pay_intest',\
+            'net_raise_cf', 'depreciation', 'amortization', 'long_term_amortization', 'total_profit',\
+            'net_asset_ps', 'eps', 'cf_ps', 'accumulation_ps', 'total_float_assets', 'total_assets',\
+            'long_term_debt', 'main_op_income', 'finance_fee', 'net_profit']
+        df = dtf([],columns=columns)
+
+        for it in finance:
+            row = []   # each row will be a dataframe's row.
+            rown = []
+            for tt in it:
+                rown.append(tt[0])
+                row.append(tt[1])
+            # print(row)
+            # print(rown)
+            # print(columns)
+            df.loc[len(df)] = row.copy()
+
+        df['code'] = code
+        # print(df)
+        records = json.loads(df.T.to_json()).values()
+        financetable.insert(records)
     
-    finance_detail.update(tidydata)
-    # print(tidydata)
-    finance = []
-    for it in finance_detail:
-        temp = finance_detail[it] + finance_sumery[it]
-        temp = [['date', it]] + temp
-        finance.append(temp)
-
-    print(finance)
-    rows = []
-    for it in finance:
-        row = []   # each row will be a dataframe's row.
-        for tt in it:
-            row.append(tt[1])
-        rows.append(row.copy())
-
-    print('\n\n')
-    print(rows)
-
-    
-
-
     
     
     # fetchStockStructure('002458')
