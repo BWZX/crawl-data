@@ -21,7 +21,7 @@ def fetchAll(slist):
         records = json.loads(df_D.T.to_json()).values()
         security.insert(records)
 
-def fetchContinue(slist, fillDays=20):
+def fetchContinue(slist, fillDays=80):
     """
         续爬slist列表里的股票，
         同时把数据存到数据库。
@@ -44,9 +44,16 @@ def fetchContinue(slist, fillDays=20):
         if tsdt.empty:
             continue
         mongodt=opdata.get_day(sto,mongodaystr, todaystr)
-        date=mongodt.iloc[0].date
-        
-        if (tsdt[tsdt.date==date].open - mongodt.iloc[0].open) > 0.0001:
+        if mongodt.empty:
+            recrawlist.append(sto)
+            print(sto)
+            print(mongodt.iloc[-1])
+            security.delete_many({'code': sto})
+            print('data delete') 
+            continue  
+        else:
+            date=mongodt.iloc[0].date
+        if (tsdt[tsdt.date==date].open - mongodt.iloc[0].open > 0.0001).bool():
             recrawlist.append(sto)
             print(sto)
             print(mongodt.iloc[-1])
@@ -89,8 +96,9 @@ def fastContinue():
 
 if __name__ == '__main__':
     # fetchAll(['000002','000004','000007','000011', '000014'])
-    import sys
-    if len(sys.argv) >=2:
-        fetchContinue(config.stolist, sys.argv[1])
-    else:
-        fetchContinue(config.stolist)
+    # import sys
+    # if len(sys.argv) >=2:
+    #     fetchContinue(config.stolist, sys.argv[1])
+    # else:
+    #     fetchContinue(config.stolist)
+    fetchContinue(['000019'])

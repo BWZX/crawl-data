@@ -128,9 +128,94 @@ def fetchHoldFund(stoid):
             data_table[date].append(cell.copy())
         print(data_table)
 
+def fetchSummary(stoid):
+    url = 'http://vip.stock.finance.sina.com.cn/corp/go.php/vFD_FinanceSummary/stockid/' + stoid + '.phtml'
+    request=urllib.request.Request(url)  
+    result=urllib.request.urlopen(request, timeout=25)
+    if result.code == 200 or 204:
+        ts = result.read()
+        ts=ts.decode('gbk')
+        # print(ts)
+        d = pq(ts)
+        data_table = {}
+        table = d('table#FundHoldSharesTable')
+        setdate = True
+        for tr in table('tr').items():
+            print(tr('td').text()+' then:\n')
+            if not tr('td').eq(1).text():
+                print('none')
+                continue
+            if setdate:
+                date = tr('td').eq(1).text()
+                data_table[date] = []
+                setdate = False
+                print(date)
+                continue            
+            cell = []
+            title = tr('td').eq(0).text()
+            cell.append(title)
+            txt = tr('td').eq(1).text()
+            txt = txt[:-1]
+            txt = txt.replace(',','')
+            cell.append(txt) 
+            print(cell)
+            data_table[date].append(cell.copy())
+            if title == '净利润':
+                setdate = True
+        print(data_table)
+
+def fetchStockStructure(stoid):
+    url = 'http://vip.stock.finance.sina.com.cn/corp/go.php/vCI_StockStructure/stockid/' + stoid + '.phtml'
+    request=urllib.request.Request(url)  
+    result=urllib.request.urlopen(request, timeout=25)
+    if result.code == 200 or 204:
+        ts = result.read()
+        ts=ts.decode('gbk')
+        # print(ts)
+        d = pq(ts)
+        data_table = []
+        for i in range(1000):
+            table = d('table#StockStructureNewTable'+str(i))
+            if not table:
+                break
+            table = table('tbody')
+            cell = []
+            for td in table('tr').eq(0)('td').items():  
+                txt = td.text().split(' ')[0]
+                cell.append(txt)
+            data_table.append(cell.copy())
+            cell = []
+            for td in table('tr').eq(1)('td').items():
+                txt = td.text().split(' ')[0]
+                cell.append(txt)
+            data_table.append(cell.copy())
+            cell = []
+            for td in table('tr').eq(4)('td').items():
+                txt = td.text().split(' ')[0]
+                cell.append(txt)
+            data_table.append(cell.copy())
+            cell = []
+            for td in table('tr').eq(6)('td').items():
+                txt = td.text().split(' ')[0]
+                cell.append(txt)
+            data_table.append(cell.copy())
+            cell = []
+            for td in table('tr').eq(7)('td').items():
+                txt = td.text().split(' ')[0]
+                cell.append(txt)
+            data_table.append(cell.copy())
+            cell = []
+            for td in table('tr').eq(8)('td').items():
+                txt = td.text().split(' ')[0]
+                cell.append(txt)
+            data_table.append(cell.copy())
+        print(data_table)
+
+
 if __name__ == '__main__':
     # fetchType(0)  
     # fetchHoldFund('002458')
     # fetchCashFlow('002458', 2017)
-    fetchProfit('002458', 2017)
+    # fetchProfit('002458', 2017)
+    fetchStockStructure('002458')
 
