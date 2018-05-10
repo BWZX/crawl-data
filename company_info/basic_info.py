@@ -4,8 +4,8 @@ from pyquery import PyQuery as pq
 from pandas import DataFrame as dtf
 import json
 from mongoconnect import *
-import sys
-sys.path.append('./publicstuff')
+import sys,os
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../publicstuff'))
 import config
 
 """
@@ -34,7 +34,7 @@ def fetchType(code):
         gn = gn[2:]        
         print(gn)       
     else:
-        print('request faild.') 
+        raise Exception('crawl failure!')
 
 def fetchCashFlow(code, year):
     url = 'http://money.finance.sina.com.cn/corp/go.php/vFD_CashFlow/stockid/' + code +'/ctrl/'+ str(year) +'/displaytype/4.phtml'
@@ -84,7 +84,9 @@ def fetchCashFlow(code, year):
             data_table[-1].append(it.text())
 
         # print(data_table)  
-        return data_table      
+        return data_table    
+    else:
+        raise Exception('crawl failure!')
     pass
 
 def fetchProfit(code, year):
@@ -103,6 +105,8 @@ def fetchProfit(code, year):
         
         # print(cell)
         return cell
+    else:
+        raise Exception('crawl failure!')
 
 def fetchHoldFund(stoid):
     url = 'http://vip.stock.finance.sina.com.cn/corp/go.php/vCI_FundStockHolder/stockid/' + stoid + '.phtml'
@@ -129,7 +133,9 @@ def fetchHoldFund(stoid):
                 # print(cell)
 
             data_table[date].append(cell.copy())
-        print(data_table)
+        return data_table
+    else:
+        raise Exception('crawl failure!')
 
 def fetchSummary(stoid):
     url = 'http://vip.stock.finance.sina.com.cn/corp/go.php/vFD_FinanceSummary/stockid/' + stoid + '.phtml'
@@ -169,6 +175,8 @@ def fetchSummary(stoid):
                 setdate = True
         # print(data_table)
         return data_table
+    else:
+        raise Exception('crawl failure!')
 
 def fetchStockStructure(stoid):
     url = 'http://vip.stock.finance.sina.com.cn/corp/go.php/vCI_StockStructure/stockid/' + stoid + '.phtml'
@@ -215,7 +223,9 @@ def fetchStockStructure(stoid):
                 txt = td.text().split(' ')[0]
                 cell.append(txt)
             data_table.append(cell.copy())
-        print(data_table)
+        return data_table
+    else:
+        raise Exception('crawl failure!')
 
 
 if __name__ == '__main__':

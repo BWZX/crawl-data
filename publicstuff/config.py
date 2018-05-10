@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 import json
 import tushare as ts
-
+import sys,os
+cfile_path = os.path.dirname(os.path.realpath(__file__))
 try:
-    with open('stocklist.json','r') as f:
+    with open(cfile_path+'/stocklist.json','r') as f:
         __flist=json.loads(f.read())
 except Exception:
     __flist={}
@@ -23,7 +24,7 @@ stolist=list(StocksList.keys())
 stolist.sort()
 # print(stolist)
 try:
-    with open('stocklist.json','w') as f:
+    with open(cfile_path+'/stocklist.json','w') as f:
         f.write(json.dumps(StocksList))
     pass
 except Exception:

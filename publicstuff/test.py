@@ -16,10 +16,12 @@ from mongoModel import *
 # for obj in Finance.objects.all():    
 #     print(obj.time)
 import json
-f=open('../mongoStockPrice/stocklist.json','r')
-sto=json.loads(f.read())
-f.close()
-stocks=list(sto.keys())
-stocks.sort()
-print(stocks)
-print(stocks.index('000408'))
+# f=open('../mongoStockPrice/stocklist.json','r')
+# sto=json.loads(f.read())
+# f.close()
+# stocks=list(sto.keys())
+# stocks.sort()
+# print(stocks)
+# print(stocks.index('000408'))
+import os,sys
+print(__file__)
