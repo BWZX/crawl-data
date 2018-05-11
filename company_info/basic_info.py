@@ -234,8 +234,8 @@ if __name__ == '__main__':
 
     # print(fetchSummary('002458'))
     # exit()
-
-    for code in ['000422']:  #422
+    indexxx = config.stolist.index('000965')
+    for code in config.stolist[indexxx:]:    #['000422']:  #422
         print(code)
         finance_sumery = fetchSummary(code)    
         # print('\n\n')
@@ -263,7 +263,10 @@ if __name__ == '__main__':
             # print(tidydata)
         finance = []
         for it in finance_detail:
-            temp = finance_detail[it] + finance_sumery[it]
+            if finance_detail.get(it) and finance_sumery.get(it) :
+                temp = finance_detail[it] + finance_sumery[it]
+            else:
+                continue
             temp = [['date', it]] + temp
             finance.append(temp)
 
