@@ -235,7 +235,7 @@ if __name__ == '__main__':
     # print(fetchSummary('002458'))
     # exit()
 
-    for code in config.stolist:
+    for code in ['000422']:  #422
         print(code)
         finance_sumery = fetchSummary(code)    
         # print('\n\n')
@@ -245,6 +245,7 @@ if __name__ == '__main__':
         for year in range(int(start_year),int(end_year)+1):
             data = fetchCashFlow(code, year)
             data.append(fetchProfit(code, year))
+            # print(data)
             datadate = data[0]
             tidydata = {}
             for ss,v in enumerate(datadate[1:]):
@@ -252,11 +253,14 @@ if __name__ == '__main__':
                 for dt in data[1:]:
                     cell = []
                     cell.append(dt[0])
-                    cell.append(dt[ss+1])
+                    if len(dt) > (ss+1):
+                        cell.append(dt[ss+1])
+                    else:
+                        cell.append('--')
                     tidydata[v].append(cell.copy())        
             finance_detail.update(tidydata)
 
-        # print(tidydata)
+            # print(tidydata)
         finance = []
         for it in finance_detail:
             temp = finance_detail[it] + finance_sumery[it]
