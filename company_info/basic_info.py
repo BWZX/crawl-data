@@ -234,7 +234,7 @@ if __name__ == '__main__':
 
     # print(fetchSummary('002458'))
     # exit()
-    indexxx = config.stolist.index('000965')
+    indexxx = config.stolist.index('002327') + 1
     for code in config.stolist[indexxx:]:    #['000422']:  #422
         print(code)
         finance_sumery = fetchSummary(code)    
@@ -252,6 +252,8 @@ if __name__ == '__main__':
                 tidydata[v] = []
                 for dt in data[1:]:
                     cell = []
+                    if len(dt)==0:
+                        continue
                     cell.append(dt[0])
                     if len(dt) > (ss+1):
                         cell.append(dt[ss+1])
