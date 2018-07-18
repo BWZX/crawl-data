@@ -111,8 +111,14 @@ def fetchProfit(code, year):
 
 def fetchHoldFund(stoid):
     url = 'http://vip.stock.finance.sina.com.cn/corp/go.php/vCI_FundStockHolder/stockid/' + stoid + '.phtml'
-    request=urllib.request.Request(url)  
-    result=urllib.request.urlopen(request, timeout=25)
+    request=urllib.request.Request(url) 
+    try: 
+        result=urllib.request.urlopen(request, timeout=125)
+    except Exception:
+        import time
+        time.sleep(120)
+        result=urllib.request.urlopen(request, timeout=125)
+
     if result.code == 200 or 204:
         ts = result.read()
         ts=ts.decode('gbk')
@@ -320,7 +326,8 @@ def Finance_Main():
 
 if __name__ == '__main__': 
     import time
-    for code in config.stolist:
+    indexxx = config.stolist.index('000038')
+    for code in config.stolist[indexxx:]:
         print(code)
         hfund = fetchHoldFund(code)
         hfund_dtf = dtf(hfund,columns=['date','fund_name','fund_code','hold_shares','liquid_share_rate','maket_value','net_value_rate'])
@@ -330,6 +337,7 @@ if __name__ == '__main__':
         # print(df)
         records = json.loads(hfund_dtf.T.to_json()).values()
         holdfund.insert(records)
+        time.sleep(10)
         # struct_data = fetchStockStructure(code)    
         # ff = dtf(struct_data)  
         # del ff[0]   
