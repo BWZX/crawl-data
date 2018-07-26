@@ -14,6 +14,7 @@ type: http://vip.stock.finance.sina.com.cn/corp/go.php/vCI_CorpOtherInfo/stockid
 finance: http://money.finance.sina.com.cn/corp/go.php/vFD_FinanceSummary/stockid/002458.phtml
 predict: http://money.finance.sina.com.cn/corp/go.php/vFD_AchievementNotice/stockid/002458.phtml
 fund: http://vip.stock.finance.sina.com.cn/corp/go.php/vCI_FundStockHolder/stockid/002458.phtml
+company_info: http://stock.quote.stockstar.com/corp_002614.shtml
 """       
 
 def fetchType(code):
@@ -233,6 +234,16 @@ def fetchStockStructure(stoid):
         return data_table
     else:
         raise Exception('crawl failure!')
+
+def fetchStockStar(stoid):
+    url = 'http://stock.quote.stockstar.com/corp_' + str(stoid) + '.shtml'
+    request=urllib.request.Request(url)  
+    result=urllib.request.urlopen(request, timeout=25)
+    if result.code == 200 or 204:
+        ts = result.read()
+        ts=ts.decode('gb2312')
+        # print(ts)
+        d = pq(ts)
 
 def Finance_Main():
     import time
