@@ -241,10 +241,30 @@ def fetchStockStar(stoid):
     result=urllib.request.urlopen(request, timeout=25)
     if result.code == 200 or 204:
         ts = result.read()
-        ts=ts.decode('gb2312')
+        ts=ts.decode('gbk')
         # print(ts)
         d = pq(ts)
+        industryTable = d('table.globalTable').eq(1)
+        productTable = d('table.globalTable').eq(2)
+        industryDict = {}
+        productDict = {}
+        industryDict['code'] = str(stoid)
+        productDict['code'] = str(stoid)
+        for tr in industryTable('tr').items():
+            k = tr('td').eq(0).text()
+            v = tr('td').eq(2).text()
+            if k:
+                industryDict[k] = v
+        for tr in productTable('tr').items():
+            k = tr('td').eq(0).text()
+            v = tr('td').eq(2).text()
+            if k:
+                productDict[k] = v    
 
+        # print(industryDict)
+        # print(productDict)
+        starindustry.insert(industryDict)
+        starproduct.insert(productDict)
 def Finance_Main():
     import time
     # fetchType(0)  
@@ -337,9 +357,24 @@ def Finance_Main():
 
 if __name__ == '__main__': 
     import time
-    indexxx = config.stolist.index('000038')
+    
+    exit()
+    indexxx = config.stolist.index('000001')
     for code in config.stolist[indexxx:]:
+        fetchStockStar(code)
         print(code)
+        time.sleep(3)
+        continue
+
+
+
+
+
+
+
+
+
+
         hfund = fetchHoldFund(code)
         hfund_dtf = dtf(hfund,columns=['date','fund_name','fund_code','hold_shares','liquid_share_rate','maket_value','net_value_rate'])
         hfund_dtf['code'] = code
