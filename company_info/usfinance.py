@@ -10,16 +10,14 @@ import time
 
 T = pd.read_csv(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../usall.csv'))
 
-def fetchIndicators(sym):
-    try:
+def fetchIndicators(sym, quarter = True):  
+    if quarter: 
         url = 'http://quotes.money.163.com/usstock/' + str(sym) + '_indicators.html?type=quarter'
-        request=urllib.request.Request(url)  
-        result=urllib.request.urlopen(request, timeout=25)
-    except Exception:
+    else:
         url = 'http://quotes.money.163.com/usstock/' + str(sym) + '_indicators.html'
-        request=urllib.request.Request(url)  
-        result=urllib.request.urlopen(request, timeout=25)
-        
+    request=urllib.request.Request(url)  
+    result=urllib.request.urlopen(request, timeout=25)
+    
     if result.code == 200 or 204:
         ts = result.read()
         ts=ts.decode('utf8')
@@ -39,6 +37,10 @@ def fetchIndicators(sym):
                 continue
             table.append(cell.copy())
         # import pdb;pdb.set_trace()
+        if len(table) < 2:
+            print(sym)
+            return fetchIndicators(sym,False)
+            
         tt = np.array(table)
         tt=tt.transpose()
         df = pd.DataFrame(tt, columns=['date','总市值','市盈率','市净率','市现率','市销率','总资产收益率',\
@@ -50,8 +52,6 @@ def fetchIndicators(sym):
         us_finance.insert(records)
         print(sym)
         time.sleep(3)
-
-
 
 if __name__ == '__main__':
     valid_once = True
