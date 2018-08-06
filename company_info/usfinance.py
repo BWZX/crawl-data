@@ -38,9 +38,10 @@ def fetchIndicators(sym, quarter = True):
             table.append(cell.copy())
         # import pdb;pdb.set_trace()
         if len(table) < 2:
-            print(sym)
+            if not url.endswith('quarter'):
+                return
             return fetchIndicators(sym,False)
-            
+
         tt = np.array(table)
         tt=tt.transpose()
         df = pd.DataFrame(tt, columns=['date','总市值','市盈率','市净率','市现率','市销率','总资产收益率',\
@@ -57,7 +58,7 @@ if __name__ == '__main__':
     valid_once = True
     for tid in range(len(T)):
         sym = T.iloc[tid].symbol        
-        if valid_once and sym != 'DEO':  
+        if valid_once and sym != 'ENIC':  
             print(sym ,' has crawled.')          
             continue
                    
