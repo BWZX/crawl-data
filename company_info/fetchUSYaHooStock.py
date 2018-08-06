@@ -16,7 +16,8 @@ T = pd.read_csv(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../usa
 valid_once = True
 for tid in range(len(T)):
     sym = T.iloc[tid].symbol
-    if valid_once and sym != 'HSBC':  
+    sym = sym.replace('.','-')
+    if valid_once and sym != 'BRK-A':   
         print(sym ,' has crawled.')          
         continue
     valid_once = False

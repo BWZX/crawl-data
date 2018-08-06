@@ -51,7 +51,8 @@ if __name__ == '__main__':
     valid_once = True
     for tid in range(len(T)):
         sym = T.iloc[tid].symbol
-        if valid_once and sym != 'HSBC':  
+        sym = sym.replace('.','-')
+        if valid_once and sym != 'BRK-A':  
             print(sym ,' has crawled.')          
             continue
                    
