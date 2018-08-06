@@ -358,8 +358,7 @@ def Finance_Main():
 if __name__ == '__main__': 
     import time
     
-    exit()
-    indexxx = config.stolist.index('000001')
+    indexxx = config.stolist.index('600705') +1
     for code in config.stolist[indexxx:]:
         fetchStockStar(code)
         print(code)
