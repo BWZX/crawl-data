@@ -11,9 +11,15 @@ import time
 T = pd.read_csv(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../usall.csv'))
 
 def fetchIndicators(sym):
-    url = 'http://quotes.money.163.com/usstock/' + str(sym) + '_indicators.html?type=quarter'
-    request=urllib.request.Request(url)  
-    result=urllib.request.urlopen(request, timeout=25)
+    try:
+        url = 'http://quotes.money.163.com/usstock/' + str(sym) + '_indicators.html?type=quarter'
+        request=urllib.request.Request(url)  
+        result=urllib.request.urlopen(request, timeout=25)
+    except Exception:
+        url = 'http://quotes.money.163.com/usstock/' + str(sym) + '_indicators.html'
+        request=urllib.request.Request(url)  
+        result=urllib.request.urlopen(request, timeout=25)
+        
     if result.code == 200 or 204:
         ts = result.read()
         ts=ts.decode('utf8')
@@ -50,9 +56,8 @@ def fetchIndicators(sym):
 if __name__ == '__main__':
     valid_once = True
     for tid in range(len(T)):
-        sym = T.iloc[tid].symbol
-        sym = sym.replace('.','-')
-        if valid_once and sym != 'BRK-A':  
+        sym = T.iloc[tid].symbol        
+        if valid_once and sym != 'DEO':  
             print(sym ,' has crawled.')          
             continue
                    
