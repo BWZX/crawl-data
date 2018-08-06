@@ -17,7 +17,7 @@ valid_once = True
 for tid in range(len(T)):
     sym = T.iloc[tid].symbol
     sym = sym.replace('.','-')
-    if valid_once and sym != 'BRK-A':   
+    if valid_once and sym != 'AAPL':   
         print(sym ,' has crawled.')          
         continue
     valid_once = False
