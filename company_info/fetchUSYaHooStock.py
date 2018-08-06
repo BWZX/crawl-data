@@ -13,8 +13,13 @@ headers = {
 }
 T = pd.read_csv(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../usall.csv'))
 
+valid_once = True
 for tid in range(len(T)):
     sym = T.iloc[tid].symbol
+    if valid_once and sym != 'HSBC':  
+        print(sym ,' has crawled.')          
+        continue
+    valid_once = False
     url = "https://query1.finance.yahoo.com/v7/finance/download/"+ sym +"?period1=1167580800&period2=1533282206&interval=1d&events=history&crumb=F5UEf511Elc"
     request=urllib.request.Request(url, headers=headers)  
     result=urllib.request.urlopen(request, context = context, timeout=25)
