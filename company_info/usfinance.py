@@ -6,6 +6,7 @@ import json
 import numpy as np
 from mongoconnect import *
 import os
+import time
 
 T = pd.read_csv(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../usall.csv'))
 
@@ -38,11 +39,17 @@ def fetchIndicators(sym):
             '净资产收益率','营业毛利率','税前利润率','营业利润率','净利润率','销售收入/平均总资产','总资本回报率',\
             '总负债/总资产','普通股权益/总资产','派息比率','资本支出/销售额','流动比率','负债/息税前营业利润',\
             '速动比率','每股净资产','摊薄每股收益','每股销售额'])
-        print(df)
+        df['code'] = sym
+        records = json.loads(df.T.to_json()).values()
+        us_finance.insert(records)
+        print(sym)
+        time.sleep(3)
 
 
 
 if __name__ == '__main__':
-    fetchIndicators('AAPL')
+    for tid in range(len(T)):
+        sym = T.iloc[tid].symbol
+        fetchIndicators(sym)
 
 

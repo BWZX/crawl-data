@@ -23,6 +23,7 @@ for tid in range(len(T)):
         ts = io.StringIO(ts)
         df = pd.read_csv(ts)
         df.rename(columns={'Date':'date', 'Open':'open', 'High': 'high', 'Low':'low', 'Close':'close', 'Adj Close':'adj_close','Volume':'volume'}, inplace = True)
+        df['code'] = sym
         records = json.loads(df.T.to_json()).values()
         us_security.insert(records)
         print(sym)
