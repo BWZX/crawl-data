@@ -30,9 +30,9 @@ for tid in range(len(T)):
         df = pd.read_csv(ts)
         df.rename(columns={'Date':'date', 'Open':'open', 'High': 'high', 'Low':'low', 'Close':'close', 'Adj Close':'adj_close','Volume':'volume'}, inplace = True)
         df['code'] = sym
-        print(df)
-        # records = json.loads(df.T.to_json()).values()
-        # us_security.insert(records)
+        # print(df)
+        records = json.loads(df.T.to_json()).values()
+        us_security.insert(records)
         print(sym)
-        time.sleep(3)
+        time.sleep(4)
         # exit()
