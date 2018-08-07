@@ -17,7 +17,7 @@ valid_once = True
 for tid in range(len(T)):
     sym = T.iloc[tid].symbol
     sym = sym.replace('.','-')
-    if valid_once and sym != 'AAPL':   
+    if valid_once and sym != 'BRK-A':   
         print(sym ,' has crawled.')          
         continue
     valid_once = False
@@ -30,8 +30,9 @@ for tid in range(len(T)):
         df = pd.read_csv(ts)
         df.rename(columns={'Date':'date', 'Open':'open', 'High': 'high', 'Low':'low', 'Close':'close', 'Adj Close':'adj_close','Volume':'volume'}, inplace = True)
         df['code'] = sym
-        records = json.loads(df.T.to_json()).values()
-        us_security.insert(records)
+        print(df)
+        # records = json.loads(df.T.to_json()).values()
+        # us_security.insert(records)
         print(sym)
         time.sleep(3)
         # exit()
