@@ -10,7 +10,8 @@ import time
 
 T = pd.read_csv(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../usall.csv'))
 
-def fetchIndicators(sym, quarter = True):  
+def fetchIndicators(sym, quarter = True): 
+    "stop on AVV.L"
     if quarter: 
         url = 'http://quotes.money.163.com/usstock/' + str(sym) + '_indicators.html?type=quarter'
     else:

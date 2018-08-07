@@ -81,7 +81,6 @@ MMM,3M Co.,明尼苏达矿业制造公司,,122021522612,NYSE,25.18750032
 MDT,Medtronic Plc,美敦力公司,,121730837850,NYSE,31.76325152
 JJGB,iPath Series B Bloomberg Grains Subindex Total Return ETN,iPath Series B Bloomberg Grains Subindex Total Return ETN,null,120144604780,AMEX,null
 RYAAY,Ryanair Holdings Plc,Ryanair Holdings Plc,航空公司,118845961229,NASDAQ,18.20108724
-CCV,Comcast Corporation 5.00% Notes Due 2061,Comcast Corporation 5.00% Notes Due 2061,null,118399861169,NYSE,14.03352032
 HON,Honeywell International  Inc.,霍尼韦尔国际公司,电子,116446379947,NYSE,25.14516108
 UNP,Union Pacific Corp.,联合太平洋公司,运输,116290318353,NASDAQ,29.57396398
 JJTB,iPath Series B Bloomberg Tin Subindex Total Return ETN,iPath Series B Bloomberg Tin Subindex Total Return ETN,null,115999263481,AMEX,null
@@ -98,14 +97,13 @@ LLY,Eli Lilly & Co.,礼来公司,生物技术和制药,109863621648,NYSE,38.5542
 TD,The Toronto-Dominion Bank,道明银行,银行,109529553792,NYSE,16.41274286
 UTX,United Technologies Corp.,联合技术公司,航空航天\/国防,107303973283,NYSE,21.91503229
 COWB,iPath Series B Bloomberg Livestock Subindex Total Return ETN,iPath Series B Bloomberg Livestock Subindex Total Return ETN,null,107006456135,AMEX,null
-WPPGY,WPP plc,WPP plc,广告,106905271790,NASDAQ,12.56398853
+WPP,WPP plc,WPP plc,广告,106905271790,NASDAQ,12.56398853
 JJMB,iPath Series B Bloomberg Industrial Metals Subindex TR ETN,iPath Series B Bloomberg Industrial Metals Subindex TR ETN,null,106888884412,AMEX,null
 JJPB,iPath Series B Bloomberg Precious Metals Subindex TR ETN,iPath Series B Bloomberg Precious Metals Subindex TR ETN,null,105155809321,AMEX,null
 VZA,Verizon Communications  Inc.,Verizon Communications  Inc.,null,105045576704,NYSE,8.02180676
 UPS,United Parcel Service  Inc.,联合包裹服务公司,运输,104684660653,NYSE,30.64599534
 CRM,salesforce.com  inc.,赛富时公司,软件,103582645552,NYSE,542.84617141
 ACN,Accenture Plc,埃森哲公司,,102638294969,NYSE,26.69166565
-DCM,NTT DoCoMo  Inc.,NTT道康姆公司,电信,101338625510,NYSE,16.62337728
 PYPL,PayPal Holdings  Inc.,PayPal,null,101267518555,NASDAQ,74.37391352
 JJSB,iPath Series B Bloomberg Softs Subindex Total Return ETN,iPath Series B Bloomberg Softs Subindex Total Return ETN,null,101080725167,AMEX,null
 GILD,Gilead Sciences  Inc.,吉利德科学公司,生物技术和制药,100608476440,NASDAQ,7.80985921
@@ -123,22 +121,18 @@ BMY,Bristol-Myers Squibb Co.,百时美施贵宝公司,制药,96721345143,NYSE,22
 PGMB,iPath Series B Bloomberg Platinum Subindex Total Return ETN,iPath Series B Bloomberg Platinum Subindex Total Return ETN,null,95881482024,AMEX,null
 QCOM,QUALCOMM  Inc.,高通公司,半导体,95147125069,NASDAQ,19.74695037
 TMO,Thermo Fisher Scientific  Inc.,赛默飞世尔科技公司,,93809725456,NYSE,45.80942852
-RAI,Reynolds American Inc,雷诺兹烟草,农业,93268907315,NYSE,15.38823565
 RIO,Rio Tinto Plc,力拓公司,采矿,92961860605,NYSE,20.33333312
 ASML,ASML Holding NV,阿斯麦公司,半导体,91790131497,NASDAQ,55.05612325
 LMT,Lockheed Martin Corp.,洛克希德马丁公司,,91705195745,NYSE,18.41166342
 SGGB,iPath Series B Bloomberg Sugar Subindex Total Return ETN,iPath Series B Bloomberg Sugar Subindex Total Return ETN,null,91361421062,AMEX,null
 SLB,Schlumberger NV,斯伦贝谢公司,,91268804371,NYSE,-53.17742091
 GS,The Goldman Sachs Group  Inc.,高盛集团,,90764723131,NYSE,14.36402654
-MTU,Mitsubishi UFJ Financial Group  Inc.,三菱日联金融集团,银行,89174536119,NYSE,13.83333336
-STO,Equinor ASA,挪威石油公司,,88992059736,NYSE,-29.49999880
 MS,Morgan Stanley,摩根士丹利,,88359674551,NYSE,17.05821920
 LFC,China Life Insurance Co. Ltd.,中国人寿保险股份有限公司,保险,87506399186,NYSE,25.25000033
 SAN,Banco Santander SA,桑坦德银行,银行,87457953646,NYSE,12.31818206
 EQNR,Equinor ASA,Equinor ASA,null,86878877290,NYSE,null
 USB,U.S. Bancorp,美国合众银行,银行,85971798752,NYSE,16.21913552
 AXP,American Express Co.,美国运通公司,多元化金融服务,85867532890,NYSE,17.65132773
-TMUSP,T-Mobile US  Inc.,T-Mobile US  Inc.,null,83737078025,NASDAQ,59.55621190
 FOXA,Twenty-First Century Fox  Inc.,21世纪福克斯公司,null,83545507635,NASDAQ,27.45731657
 MUFG,Mitsubishi UFJ Financial Group  Inc.,Mitsubishi UFJ Financial Group  Inc.,null,83321092822,NYSE,null
 COP,ConocoPhillips,康菲石油公司,油气,83159537403,NYSE,-24.59106373
@@ -218,7 +212,6 @@ LVS,Las Vegas Sands Corp.,金沙集团,住宿,53930721924,NYSE,32.59047883
 HMC,Honda Motor Co.  Ltd.,本田汽车公司,汽车制造,53543946095,NYSE,14.13614976
 AED,AEGON NV,AEGON NV,null,53149198336,NYSE,-83.87096710
 TMUS,T-Mobile US  Inc.,T-Mobile US  Inc.,,53043658380,NYSE,36.79289834
-AEK,AEGON NV,AEGON NV,null,53031068234,NYSE,159.68749880
 AEH,AEGON NV,AEGON NV,null,53006104964,NYSE,103.72000122
 INTU,Intuit  Inc.,财捷集团,软件,52787906160,NASDAQ,55.30376187
 BK,The Bank of New York Mellon Corp.,纽约梅隆银行公司,,52627106418,NYSE,16.70793634
@@ -272,7 +265,6 @@ RENX,RELX NV,RELX NV,null,43608926770,NYSE,31.36231806
 IJR,iShares Core S&P Small Cap ETF,标普小型股600指数ETF-iShares,股权,43245152696,NYSE,3.91044114
 TGT,Target Corp.,塔吉特公司,零售,43038346724,NYSE,17.18297988
 REGN,Regeneron Pharmaceuticals  Inc.,再生元制药公司,生物技术,42816949029,NASDAQ,51.55844284
-SYT,Syngenta AG,先正达公司,化学制品,42748864702,NYSE,36.28906391
 LYB,LyondellBasell Industries NV,利安德巴塞尔公司,化学制品,42681039012,NYSE,11.88061335
 ICE,Intercontinental Exchange  Inc.,洲际交易所,多元化金融服务,42349089645,NYSE,30.75527549
 BCS,Barclays Plc,巴克莱银行,银行,42323281859,NYSE,19.56862692
@@ -366,7 +358,6 @@ ALGN,Align Technology  Inc.,阿莱技术公司,,29486581556,NASDAQ,157.90559033
 LRCX,Lam Research Corp.,林氏研究公司,半导体,29354494158,NASDAQ,33.53046750
 CHU,China Unicom (Hong Kong) Ltd.,中国联通(香港)有限公司,,29242950091,NYSE,305.25000778
 TRI,Thomson Reuters Corp.,汤姆逊-路透,,29184698352,NYSE,9.93478319
-LUX,Luxottica Group S.p.A. ADS,陆逊梯卡,,29047899541,NYSE,32.05263278
 CP,Canadian Pacific Railway Ltd.,加拿大太平洋铁路,,28824899826,NYSE,25.38017617
 HBANO,Huntington Bancshares  Inc.,Huntington Bancshares  Inc.,null,28798327638,NASDAQ,37.74285789
 ADSK,Autodesk  Inc.,欧特克公司,软件,28743070413,NASDAQ,-50.25287699
@@ -419,7 +410,6 @@ IBKR,Interactive Brokers Group  Inc.,盈透证券,多元化金融服务,24662958
 CBS,CBS Corp.,哥伦比亚广播公司,媒体内容,24642910223,NYSE,18.76156665
 DXC,DXC Technology Co.,DXC Technology Co.,null,24570890385,NYSE,null
 SLF,Sun Life Financial  Inc.,永明金融,保险,24565268185,NYSE,13.38741740
-BHI,Baker Hughes Incorporated,贝克休斯公司,油气服务,24541860031,NYSE,-9.14104609
 SOJC,Southern Company (The) Series 2017B 5.25% Junior Subordinated No,Southern Company (The) Series 2017B 5.25% Junior Subordinated No,null,24477117639,NYSE,null
 NTRS,Northern Trust Corp.,北方信托公司,银行,24355600969,NASDAQ,25.24999942
 ED,Consolidated Edison  Inc.,爱迪生联合电气公司,电力,24317090759,NYSE,18.97815646
@@ -427,7 +417,6 @@ EQR,Equity Residential,资产住宅公司,房地产信托投资基金,2429532227
 K,Kellogg Co.,家乐氏,,24248359047,NYSE,35.65305913
 RCL,Royal Caribbean Cruises Ltd.,皇家加勒比邮轮,休闲,24211347590,NYSE,19.28330553
 TIP,iShares TIPS Bond ETF,通胀债券指数ETF-iShares Barclays,股权,24166184796,NYSE,21.58446633
-BCR,C.R. Bard  Inc. (New Jersey),巴德集团,,24144877864,NYSE,47.11806264
 IR,Ingersoll-Rand Plc,英格索兰,,23961760681,NYSE,17.10088515
 TLK,PT Telekomunikasi Indonesia Tbk,印尼电信,电信,23940000000,NYSE,15.83333333
 CLR,Continental Resources  Inc.,大陆能源,,23924758917,NYSE,-58.90740408
@@ -441,11 +430,9 @@ WELL,Welltower  Inc.,Welltower  Inc.,null,23497385595,NYSE,null
 HLT,Hilton Worldwide Holdings  Inc.,希尔顿酒店,住宿,23413388075,NYSE,74.70476762
 VB,Vanguard Small-Cap Index Fund,小型股指数ETF-Vanguard MSCI,股权,23388918145,NYSE,6.72455841
 VEU,Vanguard FTSE All-World ex-US Index Fund,非美地区ETF-Vanguard FTSE,股权,23035422074,NYSE,null
-CNCO,Cencosud SA,桑科萨,,23008350318,NYSE,12.98387118
 VO,Vanguard Mid-Cap Index Fund,Vanguard Mid-Cap Index Fund,股权,22952264018,NYSE,5.66165143
 TWTR,Twitter  Inc.,推特公司,null,22919059107,NYSE,-50.49230907
 LBTYB,Liberty Global Plc,自由全球,媒体内容,22916385696,NASDAQ,16.93491117
-PZE,Petrobras Argentina SA,巴西石油-阿根廷,油气,22897024171,NYSE,-226.59999510
 LBTYA,Liberty Global Plc,自由全球,媒体,22876349167,NASDAQ,16.90532469
 CMI,Cummins  Inc.,康明斯,,22827705904,NYSE,16.98541933
 WIT,Wipro Ltd.,Wipro Ltd.,计算机,22823901786,NYSE,9.56603858
@@ -471,7 +458,6 @@ TEVA,Teva Pharmaceutical Industries Ltd.,梯瓦制药公司,生物技术和制�
 LBTYK,Liberty Global Plc,自由全球,媒体,21923501144,NASDAQ,16.20118239
 PCG,PG&E Corp.,太平洋瓦斯与电力公司,,21878627921,NYSE,15.21942511
 KKR,KKR & Co. LP,KKR & Co. LP,,21872747923,NYSE,45.98305147
-Q,Quintiles Transnational Holdings Inc,昆泰医药,null,21866669122,NYSE,136.15790086
 IVW,iShares S&P 500 Growth ETF,标普500成长股指数ETF-iShares,股权,21791091078,NYSE,12.73278480
 PDD,Pinduoduo Inc.,拼多多公司,null,21779079374,NASDAQ,null
 TU,TELUS Corp.,泰勒斯,,21693699455,NYSE,23.52258078
@@ -521,7 +507,6 @@ DTE,DTE Energy Co.,DTE能源公司,,19727219264,NYSE,22.50517571
 MSI,Motorola Solutions  Inc.,摩托罗拉系统公司,计算机硬件,19698391456,NYSE,37.50617169
 CFG,Citizens Financial Group  Inc. (Rhode Island),Citizens Financial Group  Inc. (Rhode Island),null,19502584209,NYSE,20.45177682
 CCE,Coca-Cola European Partners Plc,可口可乐企业,饮料,19490049512,NYSE,26.28758299
-LVLT,Level 3 Communications Inc,第三级通讯,,19451172347,NYSE,28.67914488
 PANW,Palo Alto Networks  Inc.,Palo Alto Networks  Inc.,电信,19403094057,NYSE,-75.67391353
 HRS,Harris Corp.,哈里斯公司,电信,19376300321,NYSE,30.95454469
 HRL,Hormel Foods Corp.,荷美尔食品,,19365743925,NYSE,22.13939352
