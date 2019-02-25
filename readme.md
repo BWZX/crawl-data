@@ -22,4 +22,4 @@
 
 ## fetchUSList.py 为了生成usall.vcs 文件
 
-# * 重要提示： 使用mongoModel属于读取mongodb属于速度较慢的， 之后都是用mongoconnect文件。所以新版都是mongoconnect，  请从opdata仓库中寻找这个这个仓库的可能替代文件！！！ *
+# * 重要提示： 使用mongoModel.py读取mongodb属于速度较慢的， 之后都是用mongoconnect.py文件。所以新版都是mongoconnect，  请从opdata仓库中寻找这个这个仓库的可能替代函数！！！ *
